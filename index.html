@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Fiches Anglais V-A.1.3.1</title>
+<meta name="theme-color" content="#edf0f3">
+<title>Fiches Anglais V-A.1.3.2</title>
 <style>
 :root{
   --paper:#edf0f3; --card:#fbfaf7; --ink:#22303c; --ink-soft:#5b6b7a;
@@ -16,9 +17,11 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
+html{background:var(--paper)}
 body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   background:var(--paper); color:var(--ink);
+  min-height:100dvh;
   padding-top:env(safe-area-inset-top);
   padding-bottom:env(safe-area-inset-bottom);
   overscroll-behavior:none;
@@ -178,7 +181,7 @@ textarea{min-height:70px; resize:vertical}
 <body>
 <header>
   <h1 id="hTitle">Mes fiches</h1>
-  <span class="ver">V-A.1.3.1</span>
+  <span class="ver">V-A.1.3.2</span>
 </header>
 
 <!-- ================= ACCUEIL / PAQUETS ================= -->
@@ -313,7 +316,7 @@ textarea{min-height:70px; resize:vertical}
 
 <script>
 "use strict";
-const APP_VERSION="V-A.1.3.1";
+const APP_VERSION="V-A.1.3.2";
 const LS_KEY="fichesAnglais_v1";
 const DAY=86400000;
 // intervalles (jours) par niveau de confiance ; multipliés par le nb de succès consécutifs
@@ -492,6 +495,7 @@ function promptText(c){ return cardDir()==="fr" ? c.recto : c.verso; }
 function answerText(c){ return cardDir()==="fr" ? c.verso : c.recto; }
 function showCard(){
   const c=currentCard(); delete c._dir; const dir=cardDir();
+  cur.revealed=false;
   const f=document.getElementById("fiche");
   f.classList.remove("flipped");
   document.querySelector(".face.front .side-tag").textContent = dir==="fr"?"Français":"English";
@@ -518,13 +522,20 @@ function showCard(){
 }
 document.getElementById("fiche").addEventListener("click",e=>{
   if(e.target.id==="favBtn") return;
-  if(cur.mode!=="flip") return; // en saisie/QCM, la fiche se retourne après la réponse
-  reveal();
+  const f=document.getElementById("fiche");
+  if(cur.mode==="flip"){
+    f.classList.toggle("flipped");
+    if(f.classList.contains("flipped") && !cur.revealed) reveal();
+    return;
+  }
+  // en saisie/QCM : retournement libre uniquement après la réponse
+  if(cur.revealed) f.classList.toggle("flipped");
 });
 function reveal(){
+  cur.revealed=true;
   document.getElementById("fiche").classList.add("flipped");
   document.getElementById("confidRow").style.visibility="visible";
-  document.getElementById("stHint").textContent="Note ta confiance :";
+  document.getElementById("stHint").textContent="Note ta confiance (retouche la fiche pour revoir la question) :";
 }
 /* --- saisie tolérante --- */
 function norm(s){
