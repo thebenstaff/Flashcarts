@@ -6,7 +6,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#edf0f3">
-<title>Fiches Anglais V-A.1.7.0</title>
+<meta name="apple-mobile-web-app-title" content="Fiches">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Fiches Anglais V-A.1.7.3</title>
 <style>
 :root{
   --paper:#edf0f3; --card:#fbfaf7; --ink:#22303c; --ink-soft:#5b6b7a;
@@ -147,6 +149,13 @@ textarea{min-height:70px; resize:vertical}
 .cardline .txt b{font-size:14.5px; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 .cardline .txt span{font-size:12.5px; color:var(--ink-soft); display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 .cardline .lv{font-size:11px; font-weight:700; padding:3px 7px; border-radius:8px; color:#fff}
+.cardline{cursor:pointer}
+.cardline .full{display:none; flex-basis:100%; margin-top:8px; padding-top:8px;
+  border-top:1px dashed var(--line); font-size:13.5px; white-space:pre-wrap; line-height:1.5}
+.cardline .full .fa2{color:var(--accent-deep); margin-top:8px}
+.cardline.open{flex-wrap:wrap}
+.cardline.open .full{display:block}
+.cardline.open .txt b,.cardline.open .txt span{white-space:normal}
 .icobtn{background:none; border:none; font-size:19px; cursor:pointer; color:var(--ink-soft); padding:4px}
 .empty{
   text-align:center; color:var(--ink-soft); font-size:14px; padding:40px 20px; line-height:1.6;
@@ -191,9 +200,9 @@ textarea{min-height:70px; resize:vertical}
 .qcm button.bad{border-color:var(--red); background:#faeaea}
 .qcm button:disabled{opacity:.92}
 .mature{color:var(--green); font-weight:700}
-.chartbox{display:flex; align-items:flex-end; gap:3px; height:70px;
+.chartbox{display:flex; align-items:flex-end; gap:3px; height:90px; overflow:hidden;
   background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px}
-.chartbox .bar{flex:1; background:var(--accent); border-radius:3px 3px 0 0; min-height:2px; opacity:.85}
+.chartbox .bar{flex:1 1 0; max-height:70px; background:var(--accent); border-radius:3px 3px 0 0; opacity:.85}
 .chartbox .bar.empty{background:var(--rule)}
 .chartbox .nodata{font-size:12px; color:var(--ink-soft); margin:auto}
 /* liste des favoris */
@@ -217,7 +226,7 @@ textarea{min-height:70px; resize:vertical}
 /* ---- V-A.1.7 : bannières, tri, match, heatmap, corbeille, dark ---- */
 .banner{background:#fdf3dd; border:1px solid #ecd9a8; color:#7a5c10; border-radius:12px;
   padding:10px 14px; font-size:13px; margin-top:10px}
-.goal-line{font-size:13.5px; color:var(--ink-soft); margin-top:10px; text-align:center; cursor:pointer}
+.goal-line{font-size:13.5px; color:var(--ink-soft); margin:12px 0 16px; text-align:center; cursor:pointer}
 select.mini{width:auto; padding:8px 10px; font-size:13px; border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--ink)}
 mark{background:#ffe9a8; color:inherit; border-radius:3px; padding:0 1px}
 .tagchip{display:inline-block; font-size:11px; background:#e8f0f8; color:var(--accent-deep);
@@ -267,7 +276,7 @@ mark{background:#ffe9a8; color:inherit; border-radius:3px; padding:0 1px}
 <body>
 <header>
   <h1 id="hTitle">Mes fiches</h1>
-  <span class="ver">V-A.1.7.0</span>
+  <span class="ver">V-A.1.7.3</span>
 </header>
 
 <!-- ================= ACCUEIL / PAQUETS ================= -->
@@ -482,7 +491,7 @@ mark{background:#ffe9a8; color:inherit; border-radius:3px; padding:0 1px}
 
 <script>
 "use strict";
-const APP_VERSION="V-A.1.7.0";
+const APP_VERSION="V-A.1.7.3";
 const LS_KEY="fichesAnglais_v1";
 const DAY=86400000;
 // intervalles (jours) par niveau de confiance ; multipliés par le nb de succès consécutifs
@@ -514,6 +523,8 @@ function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.
 function nav(name){
   document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
   document.getElementById("scr-"+name).classList.add("active");
+  // pendant une session (révision, examen, match), on masque la barre du bas
+  document.querySelector(".tabbar").style.display = (name==="study"||name==="match") ? "none" : "";
   document.querySelectorAll(".tabbar button").forEach(b=>b.classList.toggle("on", b.dataset.nav===name));
   document.getElementById("hTitle").textContent =
     name==="settings" ? "Sauvegarde" : name==="study" ? "Révision" : name==="deck" ? "Paquet" : name==="edit" ? "Carte" : name==="favs" ? "Favoris" : name==="match" ? "Match" : "Mes fiches";
@@ -679,9 +690,15 @@ function renderCardList(){
     const line=document.createElement("div"); line.className="cardline";
     line.innerHTML=`<span class="lv" style="background:${colors[c.lastC||0]}">${isMature(c)?"✓":(c.lastC||"–")}</span>
       <div class="txt"><b>${c.fav?"★ ":""}${(c.fails||0)>=5?'<span class="leech">⚠</span> ':""}${hl(c.recto,raw)}</b><span>${hl(c.verso,raw)}${c.tags?' <span class="tagchip">'+esc(c.tags)+'</span>':""}</span></div>
-      <button class="icobtn ed">✎</button><button class="icobtn del">🗑</button>`;
-    line.querySelector(".ed").addEventListener("click",()=>editCard(c.id));
-    line.querySelector(".del").addEventListener("click",()=>{
+      <button class="icobtn ed">✎</button><button class="icobtn del">🗑</button>
+      <div class="full"><div>${hl(c.recto,raw)}</div><div class="fa2">${hl(c.verso,raw)}</div></div>`;
+    line.addEventListener("click",e=>{
+      if(e.target.closest(".icobtn")) return;
+      line.classList.toggle("open");
+    });
+    line.querySelector(".ed").addEventListener("click",e=>{ e.stopPropagation(); editCard(c.id); });
+    line.querySelector(".del").addEventListener("click",e=>{
+      e.stopPropagation();
       if(!confirm("Envoyer cette carte à la corbeille ? (récupérable 30 jours)")) return;
       db.trash=db.trash||[];
       db.trash.push({card:c, deckName:d.name, at:Date.now()});
@@ -1153,10 +1170,12 @@ function renderChart(){
     const k=d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());
     const e=db.history[k];
     const bar=document.createElement("div");
+    bar.style.cssText="flex:1 1 0;border-radius:3px 3px 0 0;align-self:flex-end;";
     if(e&&e.a){ any=true; const pct=Math.round(e.s/e.a*100);
-      bar.className="bar"; bar.style.height=Math.max(4,pct*0.6)+"px";
+      bar.style.height=Math.max(4,Math.min(70,pct*0.7))+"px";
+      bar.style.background="var(--accent)";
       bar.title=k+" : "+pct+"% ("+e.s+"/"+e.a+")";
-    } else { bar.className="bar empty"; bar.style.height="4px"; }
+    } else { bar.style.height="4px"; bar.style.background="var(--rule)"; }
     box.appendChild(bar);
   }
   if(!any){ box.innerHTML='<div class="nodata">Tes révisions apparaîtront ici jour par jour.</div>'; }
@@ -1173,9 +1192,11 @@ document.getElementById("globalSearch").addEventListener("input",()=>{
     for(const c of d.cards){
       if(normKey(c.recto).includes(q)||normKey(c.verso).includes(q)){
         const line=document.createElement("div"); line.className="cardline";
-        line.innerHTML=`<div class="txt"><b>${c.fav?"★ ":""}${esc(c.recto)}</b><span>${esc(c.verso)}</span></div>
-          <button class="icobtn ed">✎</button>`;
-        line.querySelector(".ed").addEventListener("click",()=>{ cur.deckId=d.id; editCard(c.id); });
+        line.innerHTML=`<div class="txt"><b>${c.fav?"★ ":""}${hl(c.recto,document.getElementById("globalSearch").value)}</b><span>${hl(c.verso,document.getElementById("globalSearch").value)}</span></div>
+          <button class="icobtn ed">✎</button>
+          <div class="full"><div>${esc(c.recto)}</div><div class="fa2">${esc(c.verso)}</div></div>`;
+        line.addEventListener("click",e=>{ if(e.target.closest(".icobtn")) return; line.classList.toggle("open"); });
+        line.querySelector(".ed").addEventListener("click",e=>{ e.stopPropagation(); cur.deckId=d.id; editCard(c.id); });
         el.appendChild(line);
         if(++hits>=30) break outer;
       }
