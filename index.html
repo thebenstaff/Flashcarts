@@ -2,1083 +2,1346 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Ma BDthèque">
-<link rel="apple-touch-icon" href="icon.png">
-<link rel="icon" type="image/png" href="icon.png">
-<title>Ma BDthèque — V-B.1.6.3</title>
+<meta name="theme-color" content="#edf0f3">
+<meta name="apple-mobile-web-app-title" content="Fiches">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Fiches Anglais V-A.1.7.3</title>
 <style>
 :root{
-  --ink:#22242b;        /* encre */
-  --paper:#f6f3ec;      /* papier */
-  --panel:#ffffff;      /* case de planche */
-  --red:#d9403a;        /* rouge kiosque */
-  --blue:#2c5f8a;       /* bleu ligne claire */
-  --gold:#c8922e;       /* dorure de tranche */
-  --muted:#8a8578;
-  --ok:#3a7d54;
-  --radius:10px;
-  --shadow:0 2px 8px rgba(34,36,43,.10);
+  --paper:#edf0f3; --card:#fbfaf7; --ink:#22303c; --ink-soft:#5b6b7a;
+  --line:#c9d3dc; --rule:#dfe6ec; --margin-red:#e0857e;
+  --accent:#2563a8; --accent-deep:#1d4e85;
+  --amber:#d99a1f; --green:#3a9d6e; --red:#c04b4b;
+  --r:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{font-size:16px}
+html,body{height:100%}
+html{background:var(--paper)}
 body{
-  font-family:-apple-system,'Segoe UI',Roboto,sans-serif;
-  background:var(--paper);color:var(--ink);
-  padding-bottom:calc(72px + env(safe-area-inset-bottom));
-  min-height:100vh;
-}
-h1,h2,h3,.display{font-family:'Avenir Next Condensed','Arial Narrow',-apple-system,sans-serif;letter-spacing:.02em}
-
-/* ---------- En-tête ---------- */
-header{
-  background:var(--ink);color:var(--paper);
-  padding:calc(12px + env(safe-area-inset-top)) 16px 12px;
-  position:sticky;top:0;z-index:20;
-  display:flex;align-items:center;gap:10px;
-}
-header h1{font-size:1.35rem;text-transform:uppercase;flex:1}
-header h1 span{color:var(--red)}
-.hbtn{
-  background:transparent;border:1.5px solid var(--paper);color:var(--paper);
-  border-radius:8px;padding:7px 10px;font-size:.85rem;font-weight:600;
-}
-/* ---------- Barre d'onglets ---------- */
-nav{
-  position:fixed;bottom:0;left:0;right:0;z-index:30;
-  background:var(--ink);display:flex;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:var(--paper); color:var(--ink);
+  min-height:100dvh;
+  padding-top:env(safe-area-inset-top);
   padding-bottom:env(safe-area-inset-bottom);
-  box-shadow:0 -2px 10px rgba(0,0,0,.2);
+  overscroll-behavior:none;
 }
-nav button{
-  flex:1;background:none;border:none;color:#9aa0ad;
-  padding:10px 4px 8px;font-size:.72rem;font-weight:600;
-  display:flex;flex-direction:column;align-items:center;gap:3px;
+.serif{font-family:"New York","Iowan Old Style",Georgia,serif}
+header{
+  padding:14px 18px 10px; display:flex; align-items:center; justify-content:space-between;
 }
-nav button .ico{font-size:1.25rem;line-height:1}
-nav button.active{color:var(--paper)}
-nav button.active .ico{color:var(--red)}
-
-/* ---------- Générique ---------- */
-main{padding:14px 14px 20px;max-width:760px;margin:0 auto}
-.toolbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
-.chip{
-  border:1.5px solid var(--ink);background:var(--panel);color:var(--ink);
-  border-radius:999px;padding:6px 13px;font-size:.82rem;font-weight:600;
+header h1{font-size:17px; font-weight:700; letter-spacing:.2px}
+header .ver{font-size:11px; color:var(--ink-soft)}
+.screen{display:none; padding:0 16px 90px; max-width:560px; margin:0 auto}
+.screen.active{display:block}
+.tabbar{
+  position:fixed; left:0; right:0; bottom:0; background:rgba(251,250,247,.94);
+  backdrop-filter:blur(10px); border-top:1px solid var(--line);
+  display:flex; padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+  z-index:50;
 }
-.chip.on{background:var(--ink);color:var(--paper)}
-input[type=search],input[type=text],input[type=number],input[type=date],select,textarea{
-  width:100%;padding:10px 12px;border:1.5px solid #d8d3c6;border-radius:var(--radius);
-  background:var(--panel);font-size:1rem;color:var(--ink);font-family:inherit;
+.tabbar button{
+  flex:1; background:none; border:none; color:var(--ink-soft);
+  font-size:11px; font-weight:600; padding:6px 0 2px; cursor:pointer;
 }
-input:focus,select:focus,textarea:focus{outline:2px solid var(--blue);outline-offset:1px}
-label{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);display:block;margin:12px 0 4px}
+.tabbar button .ico{display:block; font-size:20px; margin-bottom:2px}
+.tabbar button.on{color:var(--accent)}
 .btn{
-  background:var(--red);color:#fff;border:none;border-radius:var(--radius);
-  padding:12px 18px;font-size:1rem;font-weight:700;width:100%;
+  display:inline-block; border:none; border-radius:12px; padding:12px 18px;
+  font-size:15px; font-weight:600; cursor:pointer; background:var(--accent); color:#fff;
 }
-.btn.secondary{background:var(--panel);color:var(--ink);border:1.5px solid var(--ink)}
-.btn.small{width:auto;padding:8px 14px;font-size:.85rem}
-.btn:disabled{opacity:.45}
+.btn.sec{background:#fff; color:var(--accent); border:1.5px solid var(--accent)}
+.btn.ghost{background:transparent; color:var(--ink-soft); border:1.5px solid var(--line)}
+.btn.small{padding:8px 12px; font-size:13px; border-radius:10px}
+.btn.wide{width:100%}
+.btn:active{transform:scale(.97)}
+.deck{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--r);
+  padding:14px 16px; margin-bottom:12px; cursor:pointer;
+}
+.deck h3{font-size:16px; margin-bottom:4px}
+.deck .meta{font-size:12.5px; color:var(--ink-soft)}
+.deck .bar{height:6px; background:var(--rule); border-radius:3px; margin-top:10px; overflow:hidden}
+.deck .bar i{display:block; height:100%; background:linear-gradient(90deg,var(--red),var(--amber),var(--green)); border-radius:3px}
+.chip{
+  display:inline-block; font-size:11.5px; font-weight:600; padding:3px 9px;
+  border-radius:99px; background:var(--rule); color:var(--ink-soft); margin-right:6px;
+}
+.chip.fav{background:#f6ecd4; color:#9a6c0d}
+/* ---- carte type Brainscape : question en haut, reponse revelee en dessous ---- */
+.stage{margin:14px 0}
+.fiche{
+  position:relative; width:100%; background:#fff;
+  border:1px solid var(--line); border-radius:var(--r);
+  box-shadow:0 3px 14px rgba(34,48,60,.10);
+  cursor:pointer; overflow:hidden;
+}
+.zone{position:relative; padding:32px 20px 24px; min-height:150px;
+  display:flex; align-items:center; justify-content:center}
+.zone .letter{
+  position:absolute; top:6px; left:14px; font-size:36px; font-weight:800;
+  color:#e8eef3; line-height:1; user-select:none; pointer-events:none;
+}
+.zone .side-tag{
+  position:absolute; top:14px; right:44px; font-size:10.5px; font-weight:700;
+  letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-soft);
+}
+.zone .word{
+  font-size:26px; line-height:1.3; font-weight:600; text-align:center;
+  white-space:pre-wrap; max-height:280px; overflow-y:auto;
+  -webkit-overflow-scrolling:touch; width:100%; overscroll-behavior:contain;
+}
+.zone .word.long{font-size:16.5px; line-height:1.5; font-weight:500; text-align:left}
+.zone .word.med{font-size:20px; line-height:1.4}
+#aZone{display:none; border-top:1.5px solid var(--rule)}
+.fiche.revealed #aZone{display:flex}
+#aZone .word{color:var(--accent-deep)}
+.collapse-btn{
+  position:absolute; bottom:8px; left:10px; z-index:5; display:none;
+  background:#fff; border:1.5px solid var(--line); border-radius:50%;
+  width:34px; height:34px; font-size:14px; color:var(--ink-soft); cursor:pointer;
+}
+.fiche.revealed .collapse-btn{display:block}
+.fav-btn{
+  position:absolute; top:4px; right:8px; background:none; border:none;
+  font-size:24px; cursor:pointer; color:var(--line); z-index:5;
+}
+.fav-btn.on{color:var(--amber)}
+.speak-btn{
+  position:absolute; top:6px; right:8px; background:none; border:none;
+  font-size:20px; cursor:pointer; z-index:5;
+}
+.undo-btn{
+  display:none; margin:6px auto 0; background:#fff; border:1.5px solid var(--line);
+  border-radius:99px; padding:7px 16px; font-size:13px; font-weight:600;
+  color:var(--ink-soft); cursor:pointer;
+}
+.undo-btn.show{display:block}
+.leech{color:#c04b4b; font-size:13px; margin-left:4px}
+.hint{text-align:center; font-size:12.5px; color:var(--ink-soft); margin-bottom:8px}
+/* confiance 1-5 */
+.confid{display:flex; gap:8px; margin-top:10px}
+.confid button{
+  flex:1; border:none; border-radius:12px; padding:14px 0 10px; color:#fff;
+  font-size:19px; font-weight:700; cursor:pointer;
+}
+.confid button small{display:block; font-size:9.5px; font-weight:600; opacity:.9; margin-top:2px}
+.c1{background:#c04b4b}.c2{background:#d1783a}.c3{background:#d9a21f}.c4{background:#7ba84a}.c5{background:#3a9d6e}
+.confid button:active{transform:scale(.95)}
+.progress-line{font-size:13px; color:var(--ink-soft); text-align:center; margin:6px 0 2px}
+/* forms */
+label{display:block; font-size:12.5px; font-weight:600; color:var(--ink-soft); margin:14px 0 5px}
+input[type=text],textarea,select{
+  width:100%; padding:12px 13px; font-size:16px; border:1px solid var(--line);
+  border-radius:12px; background:#fff; color:var(--ink); font-family:inherit;
+}
+textarea{min-height:70px; resize:vertical}
+.row2{display:flex; gap:10px}
+.row2>*{flex:1}
+.cardlist{margin-top:14px}
+.cardline{
+  background:var(--card); border:1px solid var(--line); border-radius:12px;
+  padding:10px 12px; margin-bottom:8px; display:flex; align-items:center; gap:10px;
+}
+.cardline .txt{flex:1; min-width:0}
+.cardline .txt b{font-size:14.5px; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.cardline .txt span{font-size:12.5px; color:var(--ink-soft); display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.cardline .lv{font-size:11px; font-weight:700; padding:3px 7px; border-radius:8px; color:#fff}
+.cardline{cursor:pointer}
+.cardline .full{display:none; flex-basis:100%; margin-top:8px; padding-top:8px;
+  border-top:1px dashed var(--line); font-size:13.5px; white-space:pre-wrap; line-height:1.5}
+.cardline .full .fa2{color:var(--accent-deep); margin-top:8px}
+.cardline.open{flex-wrap:wrap}
+.cardline.open .full{display:block}
+.cardline.open .txt b,.cardline.open .txt span{white-space:normal}
+.icobtn{background:none; border:none; font-size:19px; cursor:pointer; color:var(--ink-soft); padding:4px}
 .empty{
-  text-align:center;color:var(--muted);padding:44px 20px;line-height:1.55;
-  border:2px dashed #d8d3c6;border-radius:var(--radius);margin-top:8px;
+  text-align:center; color:var(--ink-soft); font-size:14px; padding:40px 20px; line-height:1.6;
 }
-.empty b{color:var(--ink)}
-
-/* ---------- Étagère : la signature ---------- */
-.serie-card{
-  background:var(--panel);border-radius:var(--radius);box-shadow:var(--shadow);
-  padding:12px 12px 8px;margin-bottom:12px;
+.done-box{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--r);
+  padding:30px 22px; text-align:center; margin-top:20px;
 }
-.serie-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.serie-thumb{width:34px;height:46px;border-radius:4px;object-fit:cover;flex:0 0 auto;background:#e6e1d4}
-.serie-thumb.ph{display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:var(--muted)}
-.serie-head h3{font-size:1.12rem;text-transform:uppercase;flex:1}
-.badge{
-  font-size:.68rem;font-weight:800;letter-spacing:.05em;border-radius:4px;
-  padding:2px 7px;color:#fff;text-transform:uppercase;
-}
-.badge.BD{background:var(--blue)} .badge.Manga{background:var(--red)} .badge.Comics{background:var(--gold)}
-.serie-meta{font-size:.78rem;color:var(--muted);margin-top:2px}
-.shelf{
-  display:flex;align-items:flex-end;gap:3px;overflow-x:auto;
-  padding:14px 4px 0;min-height:96px;
-  -webkit-overflow-scrolling:touch;
-}
-.spine{
-  flex:0 0 auto;width:26px;height:84px;border-radius:3px 3px 0 0;
-  display:flex;align-items:flex-end;justify-content:center;
-  font-size:.72rem;font-weight:800;color:#fff;padding-bottom:6px;
-  position:relative;border:none;
-}
-.spine.owned{background:linear-gradient(180deg,var(--blue) 0%,var(--blue) 12%,var(--ink) 12%)}
-.spine.owned.lu{background:linear-gradient(180deg,var(--gold) 0%,var(--gold) 12%,var(--ink) 12%)}
-.spine.owned.prete{opacity:.55;transform:translateY(-8px)}
-.spine.missing{
-  background:transparent;border:2px dashed #c9c3b4;color:#b3ad9d;height:76px;
-}
-.shelf-board{height:6px;background:#d8d3c6;border-radius:2px;margin:0 4px}
-.legend{font-size:.72rem;color:var(--muted);margin-top:8px;display:flex;gap:12px;flex-wrap:wrap}
-.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
-
-.mosaic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.tile{background:var(--panel);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;text-align:center}
-.tile .serie-thumb{width:100%;height:118px;border-radius:0}
-.tile .serie-thumb.ph{font-size:1.4rem}
-.tile-info{padding:6px 6px 8px}
-.tile-info b{display:block;font-size:.74rem;line-height:1.15;max-height:2.3em;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase}
-.tile-info span{font-size:.68rem;color:var(--muted);display:block;margin-top:3px}
-@media (min-width:520px){.mosaic-grid{grid-template-columns:repeat(4,1fr)}}
-
-/* ---------- Détail série / albums ---------- */
-.album-row{
-  display:flex;gap:10px;background:var(--panel);border-radius:var(--radius);
-  box-shadow:var(--shadow);padding:10px;margin-bottom:10px;align-items:center;
-}
-.cover{
-  width:52px;height:74px;border-radius:4px;object-fit:cover;background:#e6e1d4;
-  flex:0 0 auto;display:flex;align-items:center;justify-content:center;
-  font-weight:800;color:var(--muted);font-size:1.1rem;
-}
-.album-info{flex:1;min-width:0}
-.album-info b{display:block;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.album-info small{color:var(--muted);font-size:.76rem;display:block}
-.tags{margin-top:3px;display:flex;gap:5px;flex-wrap:wrap}
-.tag{font-size:.65rem;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--paper);border:1px solid #d8d3c6;color:var(--muted)}
-.tag.lu{background:var(--gold);border-color:var(--gold);color:#fff}
-.tag.prete{background:var(--red);border-color:var(--red);color:#fff}
-.tag.eo{background:var(--blue);border-color:var(--blue);color:#fff}
-.tag.wish{background:var(--ink);border-color:var(--ink);color:#fff}
-
-/* ---------- Modale ---------- */
-.overlay{
-  position:fixed;inset:0;background:rgba(34,36,43,.55);z-index:40;
-  display:none;align-items:flex-end;justify-content:center;
-}
-.overlay.open{display:flex}
-.sheet{
-  background:var(--paper);border-radius:16px 16px 0 0;width:100%;max-width:760px;
-  max-height:88vh;overflow-y:auto;padding:18px 16px calc(18px + env(safe-area-inset-bottom));
-  -webkit-overflow-scrolling:touch;
-}
-.sheet h2{font-size:1.2rem;text-transform:uppercase;margin-bottom:4px}
-.sheet .close{float:right;background:none;border:none;font-size:1.5rem;color:var(--muted);padding:0 4px}
-.row2{display:flex;gap:10px}
-.row2>div{flex:1}
-
-/* ---------- Scanner ---------- */
-#scanBox{position:relative;border-radius:var(--radius);overflow:hidden;background:#000;margin-top:10px;display:none}
-#scanBox.on{display:block}
-#scanVideo{width:100%;max-height:44vh;display:block;object-fit:cover}
-#scanLine{position:absolute;left:8%;right:8%;top:50%;height:2px;background:var(--red);box-shadow:0 0 8px var(--red)}
-.lookup-result{background:var(--panel);border:1.5px solid var(--blue);border-radius:var(--radius);padding:12px;margin-top:12px;display:flex;gap:10px}
-
-/* ---------- Stats ---------- */
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.stat{
-  background:var(--panel);border-radius:var(--radius);box-shadow:var(--shadow);
-  padding:14px;text-align:center;
-}
-.stat .n{font-size:1.9rem;font-weight:800;font-family:'Avenir Next Condensed','Arial Narrow',sans-serif}
-.stat .l{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
-.stat.wide{grid-column:1/-1}
-.bar{height:14px;border-radius:7px;overflow:hidden;display:flex;margin-top:8px;background:#e6e1d4}
-.bar i{height:100%}
+.done-box .big{font-size:40px; margin-bottom:8px}
+.stat-grid{display:flex; gap:10px; margin:14px 0; flex-wrap:wrap}
+.stat{flex:1 1 28%; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; text-align:center}
+.stat b{font-size:22px; display:block}
+.stat span{font-size:11px; color:var(--ink-soft)}
+.section-t{font-size:13px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; color:var(--ink-soft); margin:22px 0 10px}
 .toast{
-  position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom));
-  background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:999px;
-  font-size:.88rem;font-weight:600;z-index:60;opacity:0;transition:opacity .25s;pointer-events:none;
-  max-width:90vw;text-align:center;
+  position:fixed; left:50%; transform:translateX(-50%); bottom:90px;
+  background:var(--ink); color:#fff; font-size:13.5px; padding:10px 18px;
+  border-radius:99px; opacity:0; transition:opacity .3s; z-index:99; pointer-events:none;
+  max-width:88%; text-align:center;
 }
 .toast.show{opacity:1}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.note{font-size:12.5px; color:var(--ink-soft); line-height:1.55; margin-top:8px}
+.seg{display:flex; gap:8px}
+.seg button{
+  flex:1; background:#fff; border:1.5px solid var(--line); border-radius:12px;
+  padding:11px 8px; font-size:14px; font-weight:600; color:var(--ink-soft); cursor:pointer;
+}
+.seg button small{display:block; font-weight:400; font-size:11.5px; margin-top:3px; line-height:1.35}
+.seg button.on{border-color:var(--accent); color:var(--accent); background:#eef4fb}
+.seg.vert{flex-direction:column}
+.seg.vert button{text-align:left; padding:12px 14px}
+.typebox{margin-top:12px}
+.typebox input{font-size:18px; text-align:center}
+.verdict{text-align:center; font-weight:700; font-size:15px; margin-top:10px; min-height:22px}
+.verdict.good{color:var(--green)} .verdict.bad{color:var(--red)}
+.qcm{display:flex; flex-direction:column; gap:8px; margin-top:12px}
+.qcm button{
+  background:#fff; border:1.5px solid var(--line); border-radius:12px; padding:13px 14px;
+  font-size:15px; text-align:left; cursor:pointer; color:var(--ink); line-height:1.4;
+}
+.qcm button.good{border-color:var(--green); background:#e8f5ee; font-weight:700}
+.qcm button.bad{border-color:var(--red); background:#faeaea}
+.qcm button:disabled{opacity:.92}
+.mature{color:var(--green); font-weight:700}
+.chartbox{display:flex; align-items:flex-end; gap:3px; height:90px; overflow:hidden;
+  background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px}
+.chartbox .bar{flex:1 1 0; max-height:70px; background:var(--accent); border-radius:3px 3px 0 0; opacity:.85}
+.chartbox .bar.empty{background:var(--rule)}
+.chartbox .nodata{font-size:12px; color:var(--ink-soft); margin:auto}
+/* liste des favoris */
+.favline{
+  background:#fff; border:1px solid var(--line); border-radius:12px;
+  padding:12px 14px; margin-bottom:10px; cursor:pointer;
+}
+.favline .fq{font-size:14.5px; font-weight:600; white-space:pre-wrap}
+.favline .fdeck{font-size:11px; color:var(--ink-soft); margin-top:4px}
+.favline .fa{display:none; margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);
+  font-size:14px; color:var(--accent-deep); white-space:pre-wrap}
+.favline.open .fa{display:block}
+.favline .factions{margin-top:8px; text-align:right}
+/* édition : champs plein écran */
+#scr-edit textarea{min-height:32vh; font-size:15px; line-height:1.5}
+.topline{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px}
+.topline h2{font-size:19px}
+.backlink{background:none;border:none;color:var(--accent);font-size:14.5px;font-weight:600;cursor:pointer;padding:6px 0}
+@media (prefers-reduced-motion:reduce){.fiche{transition:none}}
+
+/* ---- V-A.1.7 : bannières, tri, match, heatmap, corbeille, dark ---- */
+.banner{background:#fdf3dd; border:1px solid #ecd9a8; color:#7a5c10; border-radius:12px;
+  padding:10px 14px; font-size:13px; margin-top:10px}
+.goal-line{font-size:13.5px; color:var(--ink-soft); margin:12px 0 16px; text-align:center; cursor:pointer}
+select.mini{width:auto; padding:8px 10px; font-size:13px; border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--ink)}
+mark{background:#ffe9a8; color:inherit; border-radius:3px; padding:0 1px}
+.tagchip{display:inline-block; font-size:11px; background:#e8f0f8; color:var(--accent-deep);
+  border-radius:99px; padding:1px 8px; margin-left:4px}
+/* match */
+.match-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:14px}
+.match-grid button{
+  min-height:72px; background:#fff; border:1.5px solid var(--line); border-radius:12px;
+  font-size:13px; padding:8px; cursor:pointer; color:var(--ink); line-height:1.3; white-space:pre-wrap;
+}
+.match-grid button.sel{border-color:var(--accent); background:#eef4fb}
+.match-grid button.done{opacity:.15; pointer-events:none; border-color:var(--green)}
+.match-grid button.bad{border-color:var(--red); background:#faeaea}
+.match-timer{text-align:center; font-size:22px; font-weight:700; margin-top:8px}
+/* heatmap */
+.heat{display:grid; grid-auto-flow:column; grid-template-rows:repeat(7,10px); gap:2px;
+  overflow-x:auto; padding:10px; background:var(--card); border:1px solid var(--line); border-radius:12px}
+.heat i{width:10px; height:10px; border-radius:2px; background:var(--rule)}
+.heat i.l1{background:#bcd6ee}.heat i.l2{background:#6ea3d8}.heat i.l3{background:var(--accent-deep)}
+/* stats */
+.dist{display:flex; gap:6px; align-items:flex-end; height:70px; margin:8px 0}
+.dist div{flex:1; border-radius:4px 4px 0 0; position:relative; min-height:3px}
+.dist span{position:absolute; top:-16px; left:0; right:0; text-align:center; font-size:10px; color:var(--ink-soft)}
+.trashline{display:flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--line);
+  border-radius:10px; padding:8px 10px; margin-bottom:6px; font-size:13px}
+.trashline .t{flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.toggle-row{display:flex; align-items:center; justify-content:space-between; margin-top:12px; font-size:14px}
+.toggle-row input{width:auto; transform:scale(1.3)}
+/* mode sombre */
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#161c22; --card:#1f2830; --ink:#e6edf3; --ink-soft:#94a6b5;
+    --line:#33414d; --rule:#2a3641; --accent:#5b9bd9; --accent-deep:#8ec1ef;
+  }
+  .fiche,.qcm button,.seg button,.favline,.match-grid button,select.mini,
+  input[type=text],textarea,.undo-btn,.collapse-btn,.btn.sec{background:var(--card); color:var(--ink)}
+  .zone .letter{color:#2a3641}
+  .seg button.on,.match-grid button.sel{background:#243646}
+  .qcm button.good{background:#1e3a2d}.qcm button.bad{background:#3a2022}
+  .banner{background:#33301f; border-color:#5a5230; color:#e8d48a}
+  mark{background:#6b5a1e; color:#fff}
+  .btn.ghost{color:var(--ink-soft)}
+  .tabbar{background:rgba(31,40,48,.94)}
+}
 </style>
 </head>
 <body>
-
 <header>
-  <h1 style="line-height:1.05">Ma <span>BD</span>thèque<br><small id="verTag" style="font-size:.58rem;letter-spacing:.08em;color:#9aa0ad;font-weight:600"></small></h1>
-  <button class="hbtn" onclick="exportJSON()">Exporter</button>
-  <button class="hbtn" onclick="document.getElementById('importFile').click()">Importer</button>
-  <input type="file" id="importFile" accept=".json,application/json" style="display:none" onchange="importJSON(event)">
+  <h1 id="hTitle">Mes fiches</h1>
+  <span class="ver">V-A.1.7.3</span>
 </header>
 
-<main id="main"></main>
+<!-- ================= ACCUEIL / PAQUETS ================= -->
+<div class="screen active" id="scr-decks">
+  <div class="stat-grid">
+    <div class="stat"><b id="stCards">0</b><span>cartes</span></div>
+    <div class="stat"><b id="stDue">0</b><span>à revoir</span></div>
+    <div class="stat"><b id="stFav">0</b><span>favoris ★</span></div>
+    <div class="stat"><b id="stScore">–</b><span>score global</span></div>
+    <div class="stat"><b id="stMature" class="mature">0</b><span>acquises ✓</span></div>
+  </div>
+  <div class="goal-line" id="goalLine" title="Toucher pour changer l'objectif"></div>
+  <div class="banner" id="backupBanner" style="display:none"></div>
+  <button class="btn wide" id="btnStudyFav" style="background:var(--amber)">★ Réviser mes favoris</button>
+  <button class="btn ghost wide" id="btnListFav" style="margin-top:8px">☆ Parcourir la liste des favoris</button>
+  <input type="text" id="globalSearch" placeholder="🔍 Rechercher dans tous les paquets…" style="margin-top:14px" autocomplete="off">
+  <div class="cardlist" id="globalResults"></div>
+  <div id="statsBlock"><div class="section-t">Réussite · 14 derniers jours</div>
+  <div id="statsChart" class="chartbox"></div></div>
+  <div class="section-t">Paquets</div>
+  <div id="deckList"></div>
+  <button class="btn sec wide" id="btnNewDeck">+ Nouveau paquet</button>
+</div>
 
-<nav>
-  <button id="nav-coll" class="active" onclick="go('coll')"><span class="ico">▮▮▮</span>Collection</button>
-  <button id="nav-add" onclick="openAdd()"><span class="ico">＋</span>Ajouter</button>
-  <button id="nav-wish" onclick="go('wish')"><span class="ico">★</span>Envies</button>
-  <button id="nav-stats" onclick="go('stats')"><span class="ico">◔</span>Stats</button>
-</nav>
+<!-- ================= DÉTAIL PAQUET ================= -->
+<div class="screen" id="scr-deck">
+  <button class="backlink" data-nav="decks">‹ Paquets</button>
+  <div class="topline">
+    <h2 id="dkName"></h2>
+    <div><button class="icobtn" id="btnRenameDeck" title="Renommer / fusionner">✎</button>
+    <button class="icobtn" id="btnDelDeck" title="Supprimer">🗑</button></div>
+  </div>
+  <div class="progress-line" id="dkMeta"></div>
+  <button class="btn wide" id="btnStudyDeck" style="margin-top:10px">▶ Réviser ce paquet</button>
+  <div class="row2" style="margin-top:10px">
+    <button class="btn sec" id="btnAddCard">+ Carte</button>
+    <button class="btn ghost" id="btnMatch">🎮 Match</button>
+    <button class="btn ghost" id="btnImportCsv">CSV</button>
+  </div>
+  <input type="text" id="cardSearch" placeholder="🔍 Rechercher une carte…" style="margin-top:12px" autocomplete="off">
+  <div style="margin-top:8px;text-align:right">Trier :
+    <select class="mini" id="cardSort">
+      <option value="def">par défaut</option>
+      <option value="note">note croissante</option>
+      <option value="due">échéance proche</option>
+      <option value="leech">sangsues d'abord</option>
+      <option value="new">nouvelles d'abord</option>
+    </select></div>
+  <div class="cardlist" id="cardList"></div>
+  <button class="btn ghost wide" id="btnMoreCards" style="display:none;margin-top:6px">Afficher plus de cartes</button>
+</div>
 
-<!-- Modale ajout / scan -->
-<div class="overlay" id="ovAdd">
-  <div class="sheet">
-    <button class="close" onclick="closeSheet('ovAdd')">✕</button>
-    <h2>Ajouter un album</h2>
-    <div class="toolbar" style="margin-top:10px">
-      <button class="btn small" id="btnScan" onclick="toggleScan()">📷 Scanner le code-barres</button>
-    </div>
-    <div id="scanBox"><video id="scanVideo" playsinline muted></video><div id="scanLine"></div></div>
-    <label>Recherche par titre</label>
-    <div class="row2">
-      <div><input type="text" id="titleSearch" placeholder="Titre, série, auteur…" onkeydown="if(event.key==='Enter')searchByTitle()"></div>
-      <div style="flex:0 0 auto"><button class="btn small" style="height:100%" onclick="searchByTitle()">Chercher</button></div>
-    </div>
-    <div id="titleOut"></div>
-    <label>ISBN (13 chiffres)</label>
-    <div class="row2">
-      <div><input type="text" id="isbnInput" inputmode="numeric" placeholder="9782205088167"></div>
-      <div style="flex:0 0 auto"><button class="btn small" style="height:100%" onclick="lookupISBN()">Rechercher</button></div>
-    </div>
-    <div id="lookupOut"></div>
-    <label>Série</label>
-    <input type="text" id="fSerie" list="serieList" placeholder="Nom de la série" oninput="checkSerieMatch()">
-    <datalist id="serieList"></datalist>
-    <div id="serieWarn"></div>
-    <div class="row2">
-      <div><label>Type</label>
-        <select id="fType"><option>BD</option><option>Manga</option><option>Comics</option></select></div>
-      <div><label>Tome n°</label><input type="number" id="fTome" inputmode="numeric" min="0"></div>
-    </div>
-    <label>Titre de l'album</label>
-    <input type="text" id="fTitre">
-    <div class="row2">
-      <div><label>Scénariste / auteur</label><input type="text" id="fAuteurs"></div>
-      <div><label>Éditeur</label><input type="text" id="fEditeur"></div>
-    </div>
-    <label>Couverture</label>
-    <div class="row2">
-      <div><input type="text" id="fCover" placeholder="https://…" oninput="showCoverPreview(this.value)"></div>
-      <div style="flex:0 0 auto"><button type="button" class="btn small" style="height:100%" onclick="document.getElementById('coverFileInput').click()">📷 Photo</button></div>
-    </div>
-    <input type="file" id="coverFileInput" accept="image/*" style="display:none" onchange="handleCoverFile(event)">
-    <div id="coverPreview"></div>
-    <p style="font-size:.72rem;color:var(--muted);margin-top:4px">URL depuis un site (appui long sur l'image → Copier l'adresse), ou 📷 pour prendre/choisir une photo — la photo est compressée automatiquement pour rester légère.</p>
-    <div class="toolbar" style="margin-top:8px">
-      <button type="button" class="chip" id="cPending" onclick="this.classList.toggle('on')">⏳ À mettre à jour plus tard (référence pas encore trouvée)</button>
-    </div>
-    <label>Notes personnelles</label>
-    <textarea id="fNotes" rows="2"></textarea>
-    <div class="toolbar" style="margin-top:12px">
-      <button type="button" class="chip" id="cOwn" onclick="this.classList.toggle('on')">Je le possède</button>
-      <button type="button" class="chip" id="cLu" onclick="this.classList.toggle('on')">Lu</button>
-      <button type="button" class="chip" id="cEO" onclick="this.classList.toggle('on')">Édition originale</button>
-      <button type="button" class="chip" id="cDed" onclick="this.classList.toggle('on')">Dédicacé</button>
-    </div>
-    <label>Support (coche les deux si tu as les deux)</label>
-    <div class="toolbar">
-      <button type="button" class="chip on" id="cPhys" onclick="this.classList.toggle('on')">📕 Physique</button>
-      <button type="button" class="chip" id="cScan" onclick="this.classList.toggle('on')">💻 Scan</button>
-    </div>
-    <input type="hidden" id="fEditId">
-    <button class="btn" style="margin-top:14px" onclick="saveAlbum()">Enregistrer l'album</button>
-    <button class="btn secondary" id="btnDelete" style="margin-top:8px;display:none" onclick="deleteAlbum()">Supprimer cet album</button>
+<!-- ================= AJOUT / ÉDITION CARTE ================= -->
+<div class="screen" id="scr-edit">
+  <button class="backlink" id="editBack">‹ Retour</button>
+  <h2 id="editTitle" style="margin-bottom:4px">Nouvelle carte</h2>
+  <label>Recto (français)</label>
+  <textarea id="fRecto" placeholder="ex : une échéance"></textarea>
+  <label>Verso (anglais)</label>
+  <textarea id="fVerso" placeholder="ex : a deadline"></textarea>
+  <div class="row2">
+    <div><label>Paquet</label><select id="fDeck"></select></div>
+    <div><label>Étiquettes</label><input type="text" id="fTags" placeholder="#idiomes #travail" autocomplete="off"></div>
+  </div>
+  <div style="margin-top:18px" class="row2">
+    <button class="btn" id="btnSaveCard">Enregistrer</button>
+    <button class="btn ghost" id="btnSaveAnother">Enregistrer + nouvelle</button>
   </div>
 </div>
 
-<!-- Modale détail série -->
-<div class="overlay" id="ovSerie">
-  <div class="sheet" id="serieSheet"></div>
+<!-- ================= CONFIG SESSION ================= -->
+<div class="screen" id="scr-config">
+  <button class="backlink" data-nav="decks">‹ Annuler</button>
+  <h2 style="margin-bottom:4px">Réviser</h2>
+  <p class="note" id="cfgInfo"></p>
+  <div class="section-t">Sens</div>
+  <div class="seg" id="segDir">
+    <button data-v="fr" class="on">FR → EN</button>
+    <button data-v="en">EN → FR</button>
+    <button data-v="mix">Mixte</button>
+  </div>
+  <div class="section-t">Mode</div>
+  <div class="seg vert" id="segMode">
+    <button data-v="flip" class="on">🔄 Auto-évaluation<small>Retourne la fiche, note ta confiance</small></button>
+    <button data-v="type">⌨️ Saisie<small>Tape la réponse, correction tolérante aux petites fautes</small></button>
+    <button data-v="qcm">☑️ QCM<small>4 propositions, dont 3 leurres tirés de tes cartes</small></button>
+    <button data-v="cloze">✂️ Texte à trous<small>Le mot est masqué dans ta phrase d'exemple</small></button>
+    <button data-v="exam">🎓 Examen<small>20 questions chrono, sans indices, sans impact sur ta planification</small></button>
+  </div>
+  <div class="section-t">Taille de manche</div>
+  <div class="seg" id="segSize">
+    <button data-v="10" class="on">10</button><button data-v="20">20</button><button data-v="50">50</button>
+  </div>
+  <div class="section-t">Cartes</div>
+  <div class="seg" id="segSrc">
+    <button data-v="std" class="on">Standard</button>
+    <button data-v="leech">Sangsues ⚠</button>
+    <button data-v="new">Nouvelles</button>
+    <button data-v="rand">Aléatoire</button>
+  </div>
+  <label>Étiquette (optionnel)</label>
+  <input type="text" id="cfgTag" placeholder="#idiomes" autocomplete="off">
+  <button class="btn wide" id="btnGo" style="margin-top:20px">▶ Démarrer</button>
 </div>
+
+<!-- ================= RÉVISION ================= -->
+<div class="screen" id="scr-study">
+  <button class="backlink" id="studyBack">‹ Quitter</button>
+  <div class="progress-line" id="stProg"></div>
+  <div class="stage">
+    <div class="fiche" id="fiche">
+      <button class="fav-btn" id="favBtn">★</button>
+      <div class="zone" id="qZone">
+        <span class="letter">Q</span>
+        <span class="side-tag" id="tagQ">Français</span>
+        <div class="word serif" id="wFront"></div>
+      </div>
+      <div class="zone" id="aZone">
+        <span class="letter">A</span>
+        <span class="side-tag" id="tagA">English</span>
+        <button class="speak-btn" id="speakBtn" title="Écouter">🔊</button>
+        <div class="word serif" id="wBack"></div>
+        <button class="collapse-btn" id="collapseBtn" title="Replier la réponse">▲</button>
+      </div>
+    </div>
+  </div>
+  <div class="hint" id="stHint">Touche la fiche pour voir la réponse</div>
+  <div class="typebox" id="typeBox" style="display:none">
+    <input type="text" id="typeInput" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Ta réponse…">
+    <button class="btn wide" id="btnCheck" style="margin-top:10px">Vérifier</button>
+  </div>
+  <div class="qcm" id="qcmBox" style="display:none"></div>
+  <div class="verdict" id="verdict"></div>
+  <button class="undo-btn" id="undoBtn">↩︎ Annuler ma dernière note</button>
+  <div class="confid" id="confidRow" style="visibility:hidden">
+    <button class="c1" data-c="1">1<small>aucune idée</small></button>
+    <button class="c2" data-c="2">2<small>vague</small></button>
+    <button class="c3" data-c="3">3<small>moyen</small></button>
+    <button class="c4" data-c="4">4<small>bien</small></button>
+    <button class="c5" data-c="5">5<small>parfait</small></button>
+  </div>
+  <div class="done-box" id="doneBox" style="display:none">
+    <div class="big" id="doneBig" style="font-weight:700">✓</div>
+    <p style="font-weight:600;font-size:17px">Manche terminée</p>
+    <p class="note" id="doneNote"></p>
+    <button class="btn wide" style="margin-top:16px" id="btnMore">Continuer (10 cartes)</button>
+    <button class="btn ghost wide" style="margin-top:10px" data-nav="decks">Retour au menu</button>
+  </div>
+</div>
+
+<!-- ================= FAVORIS ================= -->
+<div class="screen" id="scr-favs">
+  <button class="backlink" data-nav="decks">‹ Accueil</button>
+  <div class="topline"><h2>Mes favoris ★</h2></div>
+  <p class="note" id="favCount"></p>
+  <button class="btn wide" id="btnStudyFav2" style="background:var(--amber);margin-top:6px">★ Réviser ces cartes</button>
+  <p class="note">Touche une carte pour afficher/masquer sa réponse. Ce parcours libre ne modifie ni tes notes ni ta planification.</p>
+  <div class="cardlist" id="favList"></div>
+</div>
+
+<!-- ================= MATCH ================= -->
+<div class="screen" id="scr-match">
+  <button class="backlink" id="matchBack">‹ Quitter</button>
+  <div class="topline"><h2>Match</h2></div>
+  <p class="note">Associe chaque mot à sa traduction, le plus vite possible. Sans impact sur ta planification.</p>
+  <div class="match-timer" id="matchTimer">0.0 s</div>
+  <div class="match-grid" id="matchGrid"></div>
+  <div class="done-box" id="matchDone" style="display:none">
+    <div class="big" id="matchScore" style="font-weight:700"></div>
+    <p style="font-weight:600;font-size:17px">Toutes les paires trouvées !</p>
+    <button class="btn wide" style="margin-top:14px" id="btnMatchAgain">Rejouer (6 nouvelles paires)</button>
+    <button class="btn ghost wide" style="margin-top:8px" id="matchBack2">Retour au paquet</button>
+  </div>
+</div>
+
+<!-- ================= RÉGLAGES / SAUVEGARDE ================= -->
+<div class="screen" id="scr-settings">
+  <h2 style="margin-bottom:4px">Sauvegarde iCloud</h2>
+  <p class="note"><b>Exporter</b> = mettre tes cartes à l'abri dans un fichier (à ranger dans iCloud Drive via « Enregistrer dans Fichiers »).<br><b>Importer</b> = récupérer un fichier : les cartes manquantes sont ajoutées, rien n'est jamais effacé, ta progression est conservée. Tu peux importer le même fichier deux fois sans risque de doublon.</p>
+  <div class="row2" style="margin-top:16px">
+    <button class="btn" id="btnExport">↑ Exporter (JSON)</button>
+    <button class="btn sec" id="btnImport">↓ Importer</button>
+  </div>
+  <button class="btn ghost wide" id="btnExportCsv" style="margin-top:8px">↑ Exporter en CSV (tableur)</button>
+  <div class="toggle-row"><span>🔊 Lire le mot anglais à chaque révélation</span>
+    <input type="checkbox" id="autoSpeak"></div>
+  <div class="section-t">Statistiques</div>
+  <div id="statsPanel" class="note"></div>
+  <div class="dist" id="distChart"></div>
+  <div class="section-t">Activité · 6 derniers mois</div>
+  <div class="heat" id="heatmap"></div>
+  <div class="section-t">Corbeille <span id="trashCount"></span></div>
+  <p class="note">Les cartes supprimées sont conservées 30 jours.</p>
+  <div id="trashList"></div>
+  <button class="btn ghost wide" id="btnEmptyTrash" style="margin-top:6px">Vider la corbeille</button>
+  <div class="section-t">Import CSV</div>
+  <p class="note">Format attendu : une carte par ligne, <b>recto;verso</b> (séparateur point-virgule, UTF-8). Ouvre un paquet puis touche « Import CSV ».</p>
+  <div class="section-t">Astuce écran d'accueil</div>
+  <p class="note">Dans Safari : bouton Partager → « Sur l'écran d'accueil ». L'app s'ouvre alors comme une application native, en plein écran.</p>
+  <div class="section-t">Comment ça révise ?</div>
+  <p class="note">Sessions par manches de 10 cartes, avec score de réussite (notes 4–5) à chaque manche et score global cumulé. Trois modes : auto-évaluation, saisie (correction tolérante aux petites fautes et accents), QCM (3 leurres tirés de tes cartes). Sens FR→EN, EN→FR ou mixte. Une carte devient « acquise ✓ » après une note 5 et au moins 3 succès consécutifs. Favoris ★ : notés &lt;5 ils reviennent au plus tard le lendemain ; notés 5, sous 7 jours.</p>
+  <input type="file" id="fileJson" accept=".json" hidden>
+  <input type="file" id="fileCsv" accept=".csv,.txt" hidden>
+</div>
+
+<nav class="tabbar">
+  <button data-nav="decks" class="on"><span class="ico">🗂</span>Paquets</button>
+  <button data-nav="settings"><span class="ico">⚙︎</span>Sauvegarde</button>
+</nav>
 
 <div class="toast" id="toast"></div>
 
 <script>
 "use strict";
-const APP_VERSION="V-B.1.6.3";
-const LS_KEY="mabdtheque_v1";
-/* REX cartes anglais : demander un stockage persistant pour éviter la purge Safari */
-if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+const APP_VERSION="V-A.1.7.3";
+const LS_KEY="fichesAnglais_v1";
+const DAY=86400000;
+// intervalles (jours) par niveau de confiance ; multipliés par le nb de succès consécutifs
+const BASE_INT={1:0,2:1,3:3,4:7,5:21};
+// règles favoris : plafond 1 jour si note <5, plafond 7 jours si note 5
+const FAV_CAP_LOW=1, FAV_CAP_TOP=7;
+const BATCH=10; // taille d'une session
 
-/* ================= Modèle =================
-   album = {id, serie, type, tome, titre, isbn, auteurs, editeur,
-            cover, notes, possede, lu, prete(""|nom), eo, dedicace, dateAjout,
-            support:["physique","scan"], pending:Bool}  — pending = couverture/infos
-            à compléter plus tard, quand la référence existera dans nos sources
-   series = { "Nom de série": {nbTomes:Number} }  — métadonnées par série */
-let db={albums:[],series:{}};
-try{const raw=localStorage.getItem(LS_KEY); if(raw) db=JSON.parse(raw);}catch(e){}
-if(!db.series) db.series={};
-/* migration douce : anciens albums sans "support" -> considérés physiques */
-for(const a of db.albums) if(!Array.isArray(a.support)) a.support=["physique"];
-function persist(){try{localStorage.setItem(LS_KEY,JSON.stringify(db));}catch(e){toast("⚠️ Sauvegarde locale impossible");}}
-const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
-const esc=s=>String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let db=load();
+let cur={deckId:null, editId:null, queue:[], idx:0, again:[], seen:0};
 
-/* ================= Navigation ================= */
-let view="coll", filterType="", filterSupport="", search="", sortMode="alpha", displayMode="liste";
-function go(v){view=v;
-  ["coll","wish","stats"].forEach(x=>{const b=document.getElementById("nav-"+x);if(b)b.classList.toggle("active",x===v);});
-  document.getElementById("nav-add").classList.remove("active");
-  render();
+function load(){
+  try{const d=JSON.parse(localStorage.getItem(LS_KEY)); if(d&&d.decks){
+    d.totalAnswers=d.totalAnswers||0; d.totalSuccess=d.totalSuccess||0;
+    d.trash=(d.trash||[]).filter(t=>Date.now()-t.at < 30*86400000); // corbeille : purge >30 j
+    d.goal=d.goal||20;
+    return d; }}catch(e){}
+  return {version:APP_VERSION, decks:[], totalAnswers:0, totalSuccess:0, trash:[], goal:20};
 }
-function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2600);}
+function save(){ db.version=APP_VERSION; localStorage.setItem(LS_KEY, JSON.stringify(db)); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function deck(id){ return db.decks.find(d=>d.id===id); }
+function allCards(){ return db.decks.flatMap(d=>d.cards); }
+function isDue(c){ return !c.due || c.due<=Date.now(); }
+function isMature(c){ return c.lastC===5 && (c.streak||0)>=3; } // acquise : notée 5 avec ≥3 succès consécutifs
+function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),2200); }
 
-/* ================= Regroupement par série ================= */
-function seriesMap(){
-  const m=new Map();
-  for(const a of db.albums){
-    const key=(a.serie||"Sans série").trim();
-    if(!m.has(key)) m.set(key,{nom:key,type:a.type||"BD",albums:[]});
-    m.get(key).albums.push(a);
+/* ---------- navigation ---------- */
+function nav(name){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById("scr-"+name).classList.add("active");
+  // pendant une session (révision, examen, match), on masque la barre du bas
+  document.querySelector(".tabbar").style.display = (name==="study"||name==="match") ? "none" : "";
+  document.querySelectorAll(".tabbar button").forEach(b=>b.classList.toggle("on", b.dataset.nav===name));
+  document.getElementById("hTitle").textContent =
+    name==="settings" ? "Sauvegarde" : name==="study" ? "Révision" : name==="deck" ? "Paquet" : name==="edit" ? "Carte" : name==="favs" ? "Favoris" : name==="match" ? "Match" : "Mes fiches";
+  if(name==="decks"){ renderDecks(); renderChart(); }
+  if(name==="settings"){ renderStats(); renderHeatmap(); renderTrash(); }
+  window.scrollTo(0,0);
+}
+document.querySelectorAll("[data-nav]").forEach(b=>b.addEventListener("click",()=>nav(b.dataset.nav)));
+
+/* ---------- accueil ---------- */
+function renderDecks(){
+  const cards=allCards();
+  document.getElementById("stCards").textContent=cards.length;
+  document.getElementById("stDue").textContent=cards.filter(isDue).length;
+  document.getElementById("stFav").textContent=cards.filter(c=>c.fav).length;
+  document.getElementById("stScore").textContent = db.totalAnswers? Math.round(db.totalSuccess/db.totalAnswers*100)+"%" : "–";
+  document.getElementById("stMature").textContent = cards.filter(isMature).length;
+  // objectif du jour + série
+  db.history=db.history||{};
+  const today=(db.history[todayKey()]||{a:0}).a;
+  let streak=0;
+  for(let i=(today>0?0:1); ; i++){
+    const d=new Date(Date.now()-i*DAY),p=n=>String(n).padStart(2,"0");
+    const k=d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());
+    if((db.history[k]||{a:0}).a>0) streak++; else break;
   }
-  for(const s of m.values()) s.albums.sort((x,y)=>(x.tome||0)-(y.tome||0));
-  return [...m.values()].sort((a,b)=>a.nom.localeCompare(b.nom,"fr"));
+  const done= today>=db.goal;
+  document.getElementById("goalLine").innerHTML =
+    `🎯 Objectif du jour : <b>${today} / ${db.goal}</b> ${done?"✅":""} · 🔥 Série : <b>${streak} jour${streak>1?"s":""}</b>`;
+  // bannière sauvegarde
+  const bb=document.getElementById("backupBanner");
+  const days=db.lastExport? Math.floor((Date.now()-db.lastExport)/DAY) : null;
+  if(cards.length && (days===null || days>=7)){
+    bb.style.display="";
+    bb.textContent="💾 "+(days===null?"Aucune sauvegarde exportée pour l'instant":"Dernier export il y a "+days+" jours")+" — pense à Sauvegarde → Exporter.";
+  } else bb.style.display="none";
+  const el=document.getElementById("deckList"); el.innerHTML="";
+  if(!db.decks.length){
+    el.innerHTML='<div class="empty">Aucun paquet pour l\'instant.<br>Crée ton premier paquet pour commencer.</div>';
+  }
+  db.decks.forEach(d=>{
+    const due=d.cards.filter(isDue).length;
+    const conf=d.cards.length? d.cards.reduce((s,c)=>s+(c.lastC||0),0)/(d.cards.length*5)*100 : 0;
+    const div=document.createElement("div"); div.className="deck";
+    div.innerHTML=`<h3>${esc(d.name)}</h3>
+      <div class="meta">${d.cards.length} carte${d.cards.length>1?"s":""} · <b>${due} à revoir</b>
+      ${d.cards.some(c=>c.fav)?'<span class="chip fav">★ favoris</span>':""}</div>
+      <div class="bar"><i style="width:${conf.toFixed(0)}%"></i></div>`;
+    div.addEventListener("click",()=>openDeck(d.id));
+    el.appendChild(div);
+  });
+}
+document.getElementById("btnNewDeck").addEventListener("click",()=>{
+  const name=prompt("Nom du paquet :","Vocabulaire pro");
+  if(!name) return;
+  db.decks.push({id:uid(), name:name.trim(), cards:[]}); save(); renderDecks();
+});
+document.getElementById("btnStudyFav").addEventListener("click",()=>{
+  const favs=allCards().filter(c=>c.fav);
+  if(!favs.length){ toast("Aucun favori : touche ★ pendant une révision"); return; }
+  openConfig(favs, "Favoris ★ — "+favs.length+" cartes");
+});
+document.getElementById("btnListFav").addEventListener("click",()=>{ renderFavs(); nav("favs"); });
+document.getElementById("btnStudyFav2").addEventListener("click",()=>{
+  const favs=allCards().filter(c=>c.fav);
+  if(!favs.length){ toast("Aucun favori"); return; }
+  openConfig(favs, "Favoris ★ — "+favs.length+" cartes");
+});
+function renderFavs(){
+  const el=document.getElementById("favList"); el.innerHTML="";
+  let n=0;
+  db.decks.forEach(d=>d.cards.forEach(c=>{
+    if(!c.fav) return; n++;
+    const line=document.createElement("div"); line.className="favline";
+    line.innerHTML=`<div class="fq">${esc(c.recto)}</div>
+      <div class="fdeck">${esc(d.name)}</div>
+      <div class="fa">${esc(c.verso)}</div>
+      <div class="factions">
+        <button class="btn small ghost ed">✎ Modifier</button>
+        <button class="btn small ghost unfav">★ Retirer</button>
+      </div>`;
+    line.addEventListener("click",e=>{
+      if(e.target.closest(".factions")) return;
+      line.classList.toggle("open");
+    });
+    line.querySelector(".ed").addEventListener("click",()=>{ cur.deckId=d.id; editCard(c.id); });
+    line.querySelector(".unfav").addEventListener("click",()=>{ c.fav=false; save(); renderFavs(); toast("Retiré des favoris"); });
+    el.appendChild(line);
+  }));
+  document.getElementById("favCount").textContent = n ? `${n} carte${n>1?"s":""} en favori.` : "";
+  if(!n) el.innerHTML='<div class="empty">Aucun favori pour l\'instant.<br>Touche ★ sur une carte pendant une révision.</div>';
 }
 
-/* ================= Vue Collection ================= */
-function render(){
-  const main=document.getElementById("main");
-  if(view==="coll") main.innerHTML=renderColl();
-  else if(view==="wish") main.innerHTML=renderWish();
-  else main.innerHTML=renderStats();
+/* ---------- config de session ---------- */
+function openConfig(cards, label){
+  cur.pending=cards;
+  document.getElementById("cfgInfo").textContent=label;
+  nav("config");
 }
-function renderColl(){
-  let h=`<div class="toolbar">
-    <input type="search" placeholder="Rechercher une série, un titre…" value="${esc(search)}"
-      oninput="search=this.value;updateCollResults()" style="flex:1;min-width:150px">
-  </div>
-  <div class="toolbar">
-    ${["","BD","Manga","Comics"].map(t=>`<button class="chip ${filterType===t?"on":""}"
-      onclick="filterType='${t}';render()">${t||"Tout"}</button>`).join("")}
-  </div>
-  <div class="toolbar">
-    ${[["","Tout support"],["physique","📕 Physique"],["scan","💻 Scan"]].map(([v,l])=>`<button class="chip ${filterSupport===v?"on":""}"
-      onclick="filterSupport='${v}';render()">${l}</button>`).join("")}
-  </div>
-  <div class="toolbar">
-    <select id="sortSelect" style="flex:1" onchange="sortMode=this.value;render()">
-      <option value="alpha" ${sortMode==="alpha"?"selected":""}>Trier : Alphabétique</option>
-      <option value="nb" ${sortMode==="nb"?"selected":""}>Trier : Nombre d'albums</option>
-      <option value="recent" ${sortMode==="recent"?"selected":""}>Trier : Ajout récent</option>
-      <option value="completion" ${sortMode==="completion"?"selected":""}>Trier : % complété</option>
-    </select>
-    <button class="chip ${displayMode==='liste'?'on':''}" onclick="displayMode='liste';render()">☰ Liste</button>
-    <button class="chip ${displayMode==='mosaique'?'on':''}" onclick="displayMode='mosaique';render()">▦ Mosaïque</button>
-  </div>
-  <div id="collResults">${collResultsHTML()}</div>`;
-  return h;
+document.querySelectorAll("#segDir button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("#segDir button").forEach(x=>x.classList.remove("on")); b.classList.add("on");
+}));
+["segMode","segSize","segSrc"].forEach(id=>{
+  document.querySelectorAll("#"+id+" button").forEach(b=>b.addEventListener("click",()=>{
+    document.querySelectorAll("#"+id+" button").forEach(x=>x.classList.remove("on")); b.classList.add("on");
+  }));
+});
+document.getElementById("btnGo").addEventListener("click",()=>{
+  cur.dir=document.querySelector("#segDir button.on").dataset.v;
+  cur.mode=document.querySelector("#segMode button.on").dataset.v;
+  cur.batch=+document.querySelector("#segSize button.on").dataset.v;
+  const src=document.querySelector("#segSrc button.on").dataset.v;
+  const tag=document.getElementById("cfgTag").value.trim().toLowerCase();
+  // source : on repart du paquet complet pour sangsues/nouvelles/aléatoire
+  let cards=cur.pending;
+  const all = cur.deckId && deck(cur.deckId) ? deck(cur.deckId).cards : cur.pending;
+  if(src==="leech") cards=all.filter(c=>(c.fails||0)>=5);
+  else if(src==="new") cards=all.filter(c=>!c.lastC);
+  else if(src==="rand") cards=shuffle(all.slice());
+  if(tag) cards=cards.filter(c=>(c.tags||"").toLowerCase().includes(tag));
+  if(!cards.length){ toast("Aucune carte ne correspond à ces critères"); return; }
+  if(cur.mode==="exam"){ startExam(cards); return; }
+  startStudy(cards);
+});
+
+/* ---------- paquet ---------- */
+const PAGE=50;
+function openDeck(id){
+  cur.deckId=id; const d=deck(id);
+  document.getElementById("dkName").textContent=d.name;
+  const due=d.cards.filter(isDue).length, mat=d.cards.filter(isMature).length;
+  const now=Date.now(), D1=now+DAY, D7=now+7*DAY;
+  const tmw=d.cards.filter(c=>c.due>now&&c.due<=D1).length;
+  const week=d.cards.filter(c=>c.due>now&&c.due<=D7).length;
+  document.getElementById("dkMeta").textContent=`${d.cards.length} cartes · ${mat} acquises ✓
+Aujourd'hui : ${due} à revoir · demain : +${tmw} · sous 7 jours : +${week}`;
+  document.getElementById("cardSearch").value="";
+  cur.shown=PAGE;
+  renderCardList();
+  nav("deck");
 }
-function updateCollResults(){
-  const d=document.getElementById("collResults");
-  if(d)d.innerHTML=collResultsHTML();
+function hl(text,raw){
+  let s=esc(text);
+  const r=(raw||"").trim();
+  if(r){ try{ s=s.replace(new RegExp("("+r.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","gi"),"<mark>$1</mark>"); }catch(e){} }
+  return s;
 }
-function collResultsHTML(){
-  let owned=seriesMap().map(s=>({...s,albums:s.albums}))
-    .filter(s=>s.albums.some(a=>a.possede&&(!filterSupport||(a.support||[]).includes(filterSupport))))
-    .filter(s=>!filterType||s.type===filterType)
-    .filter(s=>{if(!search)return true;const q=search.toLowerCase();
-      return s.nom.toLowerCase().includes(q)||s.albums.some(a=>(a.titre||"").toLowerCase().includes(q));});
-  if(!owned.length)
-    return `<div class="empty"><b>Aucune série ne correspond.</b><br>Vide ta recherche ou touche <b>＋ Ajouter</b> pour enregistrer un album.</div>`;
-  owned=sortSeries(owned);
-  let h="";
-  if(displayMode==="mosaique"){
-    h+=`<div class="mosaic-grid">`+owned.map(s=>serieTile(s)).join("")+`</div>`;
+function renderCardList(){
+  const d=deck(cur.deckId);
+  const raw=document.getElementById("cardSearch").value;
+  const q=normKey(raw);
+  let list=q ? d.cards.filter(c=>normKey(c.recto).includes(q)||normKey(c.verso).includes(q)||normKey(c.tags||"").includes(q)) : d.cards.slice();
+  const sort=document.getElementById("cardSort").value;
+  if(sort==="note") list.sort((a,b)=>(a.lastC||0)-(b.lastC||0));
+  else if(sort==="due") list.sort((a,b)=>(a.due||0)-(b.due||0));
+  else if(sort==="leech") list.sort((a,b)=>(b.fails||0)-(a.fails||0));
+  else if(sort==="new") list.sort((a,b)=>(a.lastC||0)-(b.lastC||0)||((a.due||0)-(b.due||0)));
+  const el=document.getElementById("cardList"); el.innerHTML="";
+  if(!d.cards.length){ el.innerHTML='<div class="empty">Paquet vide. Ajoute une carte ou importe un CSV.</div>'; }
+  else if(!list.length){ el.innerHTML='<div class="empty">Aucune carte ne correspond à ta recherche.</div>'; }
+  const colors={0:"#9aa7b2",1:"#c04b4b",2:"#d1783a",3:"#d9a21f",4:"#7ba84a",5:"#3a9d6e"};
+  list.slice(0,cur.shown).forEach(c=>{
+    const line=document.createElement("div"); line.className="cardline";
+    line.innerHTML=`<span class="lv" style="background:${colors[c.lastC||0]}">${isMature(c)?"✓":(c.lastC||"–")}</span>
+      <div class="txt"><b>${c.fav?"★ ":""}${(c.fails||0)>=5?'<span class="leech">⚠</span> ':""}${hl(c.recto,raw)}</b><span>${hl(c.verso,raw)}${c.tags?' <span class="tagchip">'+esc(c.tags)+'</span>':""}</span></div>
+      <button class="icobtn ed">✎</button><button class="icobtn del">🗑</button>
+      <div class="full"><div>${hl(c.recto,raw)}</div><div class="fa2">${hl(c.verso,raw)}</div></div>`;
+    line.addEventListener("click",e=>{
+      if(e.target.closest(".icobtn")) return;
+      line.classList.toggle("open");
+    });
+    line.querySelector(".ed").addEventListener("click",e=>{ e.stopPropagation(); editCard(c.id); });
+    line.querySelector(".del").addEventListener("click",e=>{
+      e.stopPropagation();
+      if(!confirm("Envoyer cette carte à la corbeille ? (récupérable 30 jours)")) return;
+      db.trash=db.trash||[];
+      db.trash.push({card:c, deckName:d.name, at:Date.now()});
+      d.cards=d.cards.filter(x=>x.id!==c.id); save(); openDeck(cur.deckId);
+      toast("Carte envoyée à la corbeille");
+    });
+    el.appendChild(line);
+  });
+  const more=document.getElementById("btnMoreCards");
+  more.style.display = list.length>cur.shown ? "" : "none";
+  more.textContent = `Afficher plus (${list.length-cur.shown} restantes)`;
+}
+document.getElementById("cardSearch").addEventListener("input",()=>{ cur.shown=PAGE; renderCardList(); });
+document.getElementById("cardSort").addEventListener("change",()=>{ cur.shown=PAGE; renderCardList(); });
+document.getElementById("btnMoreCards").addEventListener("click",()=>{ cur.shown+=PAGE; renderCardList(); });
+document.getElementById("btnRenameDeck").addEventListener("click",()=>{
+  const d=deck(cur.deckId);
+  const name=prompt("Nouveau nom du paquet :", d.name);
+  if(!name || name.trim()===d.name) return;
+  const other=db.decks.find(x=>x.id!==d.id && x.name.trim().toLowerCase()===name.trim().toLowerCase());
+  if(other){
+    if(!confirm(`Un paquet « ${other.name} » existe déjà. Fusionner les ${d.cards.length} cartes dedans ?`)) return;
+    other.cards.push(...d.cards);
+    db.decks=db.decks.filter(x=>x.id!==d.id);
+    save(); toast("Paquets fusionnés"); openDeck(other.id); return;
+  }
+  d.name=name.trim(); save(); openDeck(d.id);
+});
+document.getElementById("btnDelDeck").addEventListener("click",()=>{
+  const d=deck(cur.deckId);
+  if(!confirm(`Supprimer le paquet « ${d.name} » et ses ${d.cards.length} cartes ?`)) return;
+  db.decks=db.decks.filter(x=>x.id!==cur.deckId); save(); nav("decks");
+});
+const CATCHUP_CAP=60;
+document.getElementById("btnStudyDeck").addEventListener("click",()=>{
+  const d=deck(cur.deckId);
+  let pool=d.cards.filter(isDue);
+  let label=d.name+" — "+pool.length+" cartes à revoir";
+  if(pool.length>CATCHUP_CAP){
+    pool=pool.slice().sort((a,b)=>(a.due||0)-(b.due||0)).slice(0,CATCHUP_CAP);
+    label=d.name+" — rattrapage : les "+CATCHUP_CAP+" plus urgentes (sur "+d.cards.filter(isDue).length+")";
+  }
+  if(!pool.length && d.cards.length){ pool=d.cards.slice(); label=d.name+" — révision libre ("+pool.length+" cartes)"; }
+  if(!pool.length){ toast("Ajoute d'abord des cartes"); return; }
+  openConfig(pool, label);
+});
+
+/* ---------- édition ---------- */
+document.getElementById("btnAddCard").addEventListener("click",()=>editCard(null));
+function editCard(id){
+  cur.editId=id;
+  const d=deck(cur.deckId);
+  const c=id? d.cards.find(x=>x.id===id): null;
+  document.getElementById("editTitle").textContent=c?"Modifier la carte":"Nouvelle carte";
+  document.getElementById("fRecto").value=c?c.recto:"";
+  document.getElementById("fVerso").value=c?c.verso:"";
+  document.getElementById("fTags").value=c?(c.tags||""):"";
+  const sel=document.getElementById("fDeck"); sel.innerHTML="";
+  db.decks.forEach(dk=>{ const o=document.createElement("option"); o.value=dk.id; o.textContent=dk.name;
+    if(dk.id===cur.deckId) o.selected=true; sel.appendChild(o); });
+  document.getElementById("btnSaveAnother").style.display=c?"none":"";
+  nav("edit");
+}
+document.getElementById("editBack").addEventListener("click",()=>openDeck(cur.deckId));
+function saveCard(){
+  const r=document.getElementById("fRecto").value.trim();
+  const v=document.getElementById("fVerso").value.trim();
+  if(!r||!v){ toast("Recto et verso obligatoires"); return false; }
+  const d=deck(cur.deckId);
+  const target=deck(document.getElementById("fDeck").value)||d;
+  const tags=document.getElementById("fTags").value.trim();
+  if(cur.editId){
+    const c=d.cards.find(x=>x.id===cur.editId); c.recto=r; c.verso=v; c.tags=tags;
+    if(target.id!==d.id){ d.cards=d.cards.filter(x=>x.id!==c.id); target.cards.push(c); cur.deckId=target.id; toast("Carte déplacée vers "+target.name); }
   }else{
-    for(const s of owned) h+=serieCard(s);
-    h+=`<div class="legend" style="margin:4px 6px 0">
-      <span><i style="background:var(--ink)"></i>Possédé</span>
-      <span><i style="background:var(--gold)"></i>Lu (liseré)</span>
-      <span><i style="border:2px dashed #c9c3b4;background:none"></i>Manquant</span>
-      <span>Décalé vers le haut = prêté</span></div>`;
+    target.cards.push({id:uid(), recto:r, verso:v, tags, fav:false, lastC:0, streak:0, due:0});
+    cur.deckId=target.id;
   }
-  return h;
+  save(); return true;
 }
-function sortSeries(list){
-  const poss=s=>s.albums.filter(a=>a.possede);
-  const nbTot=s=>Math.max(...s.albums.map(a=>a.tome||0),(db.series[s.nom]&&db.series[s.nom].nbTomes)||0,0);
-  const lastAdd=s=>Math.max(...s.albums.map(a=>a.dateAjout?new Date(a.dateAjout).getTime():0),0);
-  const arr=[...list];
-  if(sortMode==="nb") arr.sort((a,b)=>poss(b).length-poss(a).length);
-  else if(sortMode==="recent") arr.sort((a,b)=>lastAdd(b)-lastAdd(a));
-  else if(sortMode==="completion") arr.sort((a,b)=>{
-    const ca=nbTot(a)?poss(a).length/nbTot(a):0, cb=nbTot(b)?poss(b).length/nbTot(b):0;
-    return cb-ca;});
-  else arr.sort((a,b)=>a.nom.localeCompare(b.nom,"fr"));
-  return arr;
-}
-function serieThumb(s){
-  const withCover=s.albums.find(a=>a.possede&&a.cover);
-  if(withCover) return `<img class="serie-thumb" src="${esc(withCover.cover)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=\\'serie-thumb ph\\'>${esc(s.nom.slice(0,2).toUpperCase())}</div>'">`;
-  return `<div class="serie-thumb ph">${esc(s.nom.slice(0,2).toUpperCase())}</div>`;
-}
-function serieCard(s){
-  const poss=s.albums.filter(a=>a.possede&&(!filterSupport||(a.support||[]).includes(filterSupport)));
-  const nbDecl=(db.series[s.nom]&&db.series[s.nom].nbTomes)||0;
-  const maxT=Math.max(...s.albums.map(a=>a.tome||0),nbDecl,0);
-  const byTome=new Map(); for(const a of s.albums) if(a.tome) byTome.set(a.tome,a);
-  let spines="";
-  if(maxT>0&&maxT<=200){
-    for(let t=1;t<=maxT;t++){
-      const a=byTome.get(t);
-      if(a&&a.possede)
-        spines+=`<button class="spine owned ${a.lu?"lu":""} ${a.prete?"prete":""}" onclick="event.stopPropagation();openEdit('${a.id}')" aria-label="Tome ${t}">${t}</button>`;
-      else
-        spines+=`<button class="spine missing" onclick="event.stopPropagation();quickWish('${esc(s.nom)}','${esc(s.type)}',${t})" aria-label="Tome ${t} manquant">${t}</button>`;
-    }
-  }else{
-    for(const a of poss) spines+=`<button class="spine owned ${a.lu?"lu":""} ${a.prete?"prete":""}" onclick="event.stopPropagation();openEdit('${a.id}')">${a.tome||"·"}</button>`;
-  }
-  const total=maxT>0?maxT:poss.length;
-  const compte=`${poss.length}/${total}`;
-  return `<div class="serie-card" onclick="openSerie('${esc(s.nom)}')">
-    <div class="serie-head">${serieThumb(s)}<h3>${esc(s.nom)}</h3><span class="badge ${esc(s.type)}">${esc(s.type)}</span></div>
-    <div class="serie-meta"><b>${compte}</b> possédés · ${poss.filter(a=>a.lu).length} lu${poss.filter(a=>a.lu).length>1?"s":""}${poss.some(a=>(a.support||[]).includes("scan"))?" · 💻 scan présent":""}</div>
-    <div class="shelf">${spines}</div><div class="shelf-board"></div>
-  </div>`;
-}
-function serieTile(s){
-  const poss=s.albums.filter(a=>a.possede&&(!filterSupport||(a.support||[]).includes(filterSupport)));
-  const nbDecl=(db.series[s.nom]&&db.series[s.nom].nbTomes)||0;
-  const maxT=Math.max(...s.albums.map(a=>a.tome||0),nbDecl,0);
-  const total=maxT>0?maxT:poss.length;
-  return `<div class="tile" onclick="openSerie('${esc(s.nom)}')">
-    ${serieThumb(s)}
-    <div class="tile-info"><b>${esc(s.nom)}</b><span>${poss.length}/${total} · <span class="badge ${esc(s.type)}" style="padding:1px 5px">${esc(s.type)}</span></span></div>
-  </div>`;
-}
-function quickWish(serie,type,tome){
-  db.albums.push({id:uid(),serie,type,tome,titre:`${serie} T${tome}`,possede:false,lu:false,prete:"",eo:false,dedicace:false,dateAjout:new Date().toISOString()});
-  persist();render();toast(`★ ${serie} T${tome} ajouté aux envies`);
-}
+document.getElementById("btnSaveCard").addEventListener("click",()=>{ if(saveCard()) openDeck(cur.deckId); });
+document.getElementById("btnSaveAnother").addEventListener("click",()=>{
+  if(saveCard()){ cur.editId=null; document.getElementById("fRecto").value=""; document.getElementById("fVerso").value=""; document.getElementById("fRecto").focus(); toast("Carte ajoutée"); }
+});
 
-/* ================= Détail série ================= */
-function openSerie(nom){
-  const s=seriesMap().find(x=>x.nom===nom); if(!s)return;
-  const poss=s.albums.filter(a=>a.possede);
-  const nbDecl=(db.series[nom]&&db.series[nom].nbTomes)||"";
-  let h=`<button class="close" onclick="closeSheet('ovSerie')">✕</button>
-    <h2>${esc(s.nom)}</h2>
-    <div class="serie-meta" style="margin-bottom:10px">${poss.length} albums possédés</div>
-    <div class="toolbar">
-      <span style="font-size:.82rem;font-weight:700">Tomes parus (série complète) :</span>
-      <input type="number" id="nbTomesInput" inputmode="numeric" style="width:76px" min="1" value="${nbDecl}">
-      <button class="btn small" onclick="saveNbTomes('${esc(nom)}')">OK</button>
-    </div>
-    <div class="toolbar">
-      <span style="font-size:.82rem;font-weight:700">Marquer lus jusqu'au tome :</span>
-      <input type="number" id="luJusqua" inputmode="numeric" style="width:76px" min="1">
-      <button class="btn small" onclick="markLuJusqua('${esc(nom)}')">OK</button>
-    </div>
-    <button class="btn secondary" style="margin-bottom:12px" onclick="searchSerieOnline('${esc(nom)}')">🔎 Chercher les tomes de la série en ligne</button>
-    <div id="serieSearchOut"></div>`;
-  for(const a of s.albums) h+=albumRow(a);
-  document.getElementById("serieSheet").innerHTML=h;
-  document.getElementById("ovSerie").classList.add("open");
+/* ---------- révision ---------- */
+function startStudy(cards){
+  // priorité aux cartes les plus en retard : tri par échéance + aléa léger pour varier
+  cur.pool=cards.slice().sort((a,b)=>(a.due||0)-(b.due||0)+(Math.random()*DAY-DAY/2));
+  cur.again=[];
+  nextBatch();
+  nav("study");
 }
-function albumRow(a){
-  const cov=a.cover?`<img class="cover" src="${esc(a.cover)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=cover>T${a.tome||"?"}</div>'">`:`<div class="cover">T${a.tome||"?"}</div>`;
-  return `<div class="album-row" onclick="openEdit('${a.id}')">${cov}
-    <div class="album-info"><b>${a.tome?`T${a.tome} · `:""}${esc(a.titre||"(sans titre)")}</b>
-      <small>${esc(a.auteurs||"")} ${a.editeur?"· "+esc(a.editeur):""}</small>
-      <div class="tags">
-        ${a.possede?"":`<span class="tag wish">★ Envie</span>`}
-        ${a.lu?`<span class="tag lu">Lu</span>`:""}
-        ${a.prete?`<span class="tag prete">Prêté à ${esc(a.prete)}</span>`:""}
-        ${a.eo?`<span class="tag eo">EO</span>`:""}
-        ${a.dedicace?`<span class="tag">Dédicacé</span>`:""}
-        ${(a.support||[]).includes("physique")?`<span class="tag">📕 Physique</span>`:""}
-        ${(a.support||[]).includes("scan")?`<span class="tag">💻 Scan</span>`:""}
-        ${a.pending?`<span class="tag" style="background:var(--gold);border-color:var(--gold);color:#fff">⏳ À MàJ</span>`:""}
-      </div></div></div>`;
+function nextBatch(){
+  cur.undo=null; document.getElementById("undoBtn").classList.remove("show");
+  // reconstitue le vivier si épuisé (les cartes ≤2 remises en file d'abord)
+  if(!cur.pool.length && cur.again && cur.again.length){ cur.pool=shuffle(cur.again); cur.again=[]; }
+  cur.queue=cur.pool.splice(0,cur.batch||BATCH);
+  cur.idx=0; cur.again=cur.again||[]; cur.seen=0; cur.ok=0;
+  document.getElementById("doneBox").style.display="none";
+  document.getElementById("fiche").style.display="";
+  document.getElementById("confidRow").style.display="";
+  showCard();
 }
-function saveNbTomes(nom){
-  const n=parseInt(document.getElementById("nbTomesInput").value,10)||0;
-  if(n>0) db.series[nom]={...(db.series[nom]||{}),nbTomes:n};
-  else delete db.series[nom];
-  persist();render();openSerie(nom);
-  toast(n>0?`Série déclarée en ${n} tomes — les manquants s'affichent en pointillés`:"Nombre de tomes effacé");
-}
-async function searchSerieOnline(nom){
-  const out=document.getElementById("serieSearchOut");
-  out.innerHTML=`<p style="color:var(--muted);margin-bottom:10px">Recherche en cours dans Google Books…</p>`;
-  const owned=new Set(db.albums.filter(a=>(a.serie||"").trim()===nom).map(a=>a.tome).filter(Boolean));
-  let vols=[];
-  try{
-    for(let start=0;start<80;start+=40){
-      const r=await fetch(`https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent('"'+nom+'"')}&maxResults=40&startIndex=${start}&langRestrict=fr`);
-      const j=await r.json();
-      if(!j.items) break;
-      vols=vols.concat(j.items);
-      if(j.items.length<40) break;
-    }
-  }catch(e){out.innerHTML=`<p style="color:var(--red)">Recherche impossible — vérifie ta connexion.</p>`;return;}
-  /* extraire les tomes : "Titre - Tome 3", "Titre T3", "Titre, Vol. 3"… */
-  const found=new Map();
-  for(const it of vols){
-    const v=it.volumeInfo||{}; const t=v.title||"";
-    if(!t.toLowerCase().includes(nom.toLowerCase())) continue;
-    const m=(t+" "+(v.subtitle||"")).match(/(?:tome|t\.?|vol\.?|#)\s*(\d{1,3})/i);
-    if(!m) continue;
-    const num=parseInt(m[1],10);
-    if(num>0&&num<300&&!found.has(num))
-      found.set(num,{tome:num,titre:t,isbn:((v.industryIdentifiers||[]).find(x=>x.type==="ISBN_13")||{}).identifier||"",
-        cover:(v.imageLinks&&v.imageLinks.smallThumbnail||"").replace("http://","https://")});
+function currentCard(){ return cur.queue[cur.idx]; }
+// coeur d'une face : le texte hors annotation (bloc commençant par 💡 ou 🧠)
+function coreText(s){
+  const t=(s||"").trim();
+  if(t.startsWith("💡")||t.startsWith("🧠")){
+    const i=t.indexOf("\n\n");
+    if(i>-1) return t.slice(i+2).trim();
+    // annotation seule sur la 1re ligne
+    const j=t.indexOf("\n");
+    if(j>-1) return t.slice(j+1).trim();
   }
-  const missing=[...found.values()].filter(x=>!owned.has(x.tome)).sort((a,b)=>a.tome-b.tome);
-  const maxFound=Math.max(...found.keys(),0);
-  if(!found.size){out.innerHTML=`<p style="color:var(--muted)">Aucun tome numéroté trouvé pour « ${esc(nom)} ». Google Books couvre mal certaines séries — renseigne le nombre de tomes à la main ci-dessus (info visible sur bedetheque.com).</p>`;return;}
-  let h=`<p style="font-size:.85rem;margin-bottom:8px"><b>${found.size} tomes repérés</b> (jusqu'au T${maxFound}) · <b style="color:var(--red)">${missing.length} que tu n'as pas</b> — liste indicative, Google Books peut être incomplet.</p>`;
-  if(missing.length){
-    h+=missing.map(x=>`<div class="album-row">
-      ${x.cover?`<img class="cover" src="${esc(x.cover)}" alt="">`:`<div class="cover">T${x.tome}</div>`}
-      <div class="album-info"><b>T${x.tome} · ${esc(x.titre)}</b><small>${x.isbn?"ISBN "+esc(x.isbn):""}</small></div>
-      <button class="btn small" onclick='addWishFromSearch(${JSON.stringify(nom)},${x.tome},${JSON.stringify(x.titre)},${JSON.stringify(x.isbn)},${JSON.stringify(x.cover)});this.textContent="✓";this.disabled=true'>＋ Envie</button>
-    </div>`).join("");
-    h+=`<button class="btn" style="margin-top:6px" onclick="addAllWish('${esc(nom)}')">Tout ajouter aux envies (${missing.length})</button>`;
-    window._lastMissing={nom,missing};
-  }
-  if(maxFound>((db.series[nom]||{}).nbTomes||0))
-    h+=`<button class="btn secondary" style="margin-top:8px" onclick="document.getElementById('nbTomesInput').value=${maxFound};saveNbTomes('${esc(nom)}')">Déclarer la série en ${maxFound} tomes</button>`;
-  out.innerHTML=h;
+  return t;
 }
-function addWishFromSearch(serie,tome,titre,isbn,cover){
-  const s=seriesMap().find(x=>x.nom===serie);
-  db.albums.push({id:uid(),serie,type:(s&&s.type)||"BD",tome,titre,isbn,cover,
-    possede:false,lu:false,prete:"",eo:false,dedicace:false,dateAjout:new Date().toISOString()});
-  persist();render();toast(`★ T${tome} ajouté aux envies`);
-}
-function addAllWish(nom){
-  if(!window._lastMissing||window._lastMissing.nom!==nom)return;
-  let c=0;
-  for(const x of window._lastMissing.missing){
-    if(db.albums.some(a=>(a.serie||"").trim()===nom&&a.tome===x.tome))continue;
-    addWishFromSearchSilent(nom,x);c++;
-  }
-  persist();render();openSerie(nom);toast(`★ ${c} tomes ajoutés aux envies`);
-}
-function addWishFromSearchSilent(serie,x){
-  const s=seriesMap().find(y=>y.nom===serie);
-  db.albums.push({id:uid(),serie,type:(s&&s.type)||"BD",tome:x.tome,titre:x.titre,isbn:x.isbn,cover:x.cover,
-    possede:false,lu:false,prete:"",eo:false,dedicace:false,dateAjout:new Date().toISOString()});
-}
-function markLuJusqua(nom){
-  const n=parseInt(document.getElementById("luJusqua").value,10);
-  if(!n){toast("Indique un numéro de tome");return;}
-  let c=0;
-  for(const a of db.albums) if((a.serie||"").trim()===nom&&a.possede&&a.tome&&a.tome<=n&&!a.lu){a.lu=true;c++;}
-  persist();openSerie(nom);render();toast(`${c} album${c>1?"s":""} marqué${c>1?"s":""} lu${c>1?"s":""}`);
-}
-
-/* ================= Envies ================= */
-function renderWish(){
-  const wish=db.albums.filter(a=>!a.possede).sort((a,b)=>(a.serie||"").localeCompare(b.serie||"","fr")||((a.tome||0)-(b.tome||0)));
-  let h=`<h2 class="display" style="text-transform:uppercase;margin-bottom:10px">Mes envies · liste d'achats</h2>`;
-  if(!wish.length) return h+`<div class="empty"><b>Aucune envie pour l'instant.</b><br>Touche un tome en pointillés sur une étagère pour l'ajouter ici.</div>`;
-  for(const a of wish) h+=albumRow(a);
-  return h;
-}
-
-/* ================= Stats ================= */
-const EPAISSEUR={BD:10,Manga:16,Comics:7}; /* mm par album, estimation */
-function renderStats(){
-  const poss=db.albums.filter(a=>a.possede);
-  const lus=poss.filter(a=>a.lu).length;
-  const byType={BD:0,Manga:0,Comics:0};
-  let mm=0;
-  for(const a of poss){byType[a.type||"BD"]=(byType[a.type||"BD"]||0)+1;mm+=EPAISSEUR[a.type]||10;}
-  const manq=db.albums.filter(a=>!a.possede).length;
-  const pretes=poss.filter(a=>a.prete);
-  const tot=poss.length||1;
-  let h=`<h2 class="display" style="text-transform:uppercase;margin-bottom:10px">Statistiques</h2>
-  <div class="stat-grid">
-    <div class="stat"><div class="n">${poss.length}</div><div class="l">Albums possédés</div></div>
-    <div class="stat"><div class="n">${(mm/1000).toFixed(2).replace(".",",")} m</div><div class="l">Hauteur d'étagère</div></div>
-    <div class="stat"><div class="n">${lus}</div><div class="l">Lus (${Math.round(lus/tot*100)} %)</div></div>
-    <div class="stat"><div class="n" style="color:var(--red)">${manq}</div><div class="l">Envies / manquants</div></div>
-    <div class="stat wide"><div class="l" style="margin-bottom:2px">Répartition</div>
-      <div class="bar">
-        <i style="width:${byType.BD/tot*100}%;background:var(--blue)"></i>
-        <i style="width:${byType.Manga/tot*100}%;background:var(--red)"></i>
-        <i style="width:${byType.Comics/tot*100}%;background:var(--gold)"></i>
-      </div>
-      <div class="legend" style="justify-content:center;margin-top:6px">
-        <span><i style="background:var(--blue)"></i>BD ${byType.BD}</span>
-        <span><i style="background:var(--red)"></i>Manga ${byType.Manga}</span>
-        <span><i style="background:var(--gold)"></i>Comics ${byType.Comics}</span>
-      </div></div>`;
-  if(pretes.length){
-    h+=`<div class="stat wide" style="text-align:left"><div class="l" style="margin-bottom:6px">Albums prêtés</div>`;
-    for(const a of pretes) h+=`<div style="font-size:.88rem;padding:3px 0">📕 <b>${esc(a.serie)} ${a.tome?"T"+a.tome:""}</b> → chez <b>${esc(a.prete)}</b></div>`;
-    h+=`</div>`;
-  }
-  h+=`</div><p style="text-align:center;color:var(--muted);font-size:.72rem;margin-top:16px">${APP_VERSION} · données stockées dans ce navigateur · pense à exporter régulièrement</p>`;
-  const pend=db.albums.filter(a=>a.pending&&a.isbn);
-  if(pend.length){
-    h+=`<div class="stat wide" style="text-align:left;margin-top:10px">
-      <div class="l" style="margin-bottom:6px">⏳ ${pend.length} album${pend.length>1?"s":""} à mettre à jour</div>
-      <p style="font-size:.82rem;color:var(--muted);margin-bottom:8px">Relance une recherche sur Google Books / OpenLibrary / BnF pour tous ces albums d'un coup — utile si tu reviens quelques semaines après une sortie récente.</p>
-      <button class="btn secondary" onclick="bulkUpdatePending()">🔄 Réessayer les recherches (${pend.length})</button>
-      <div id="bulkOut" style="margin-top:8px;font-size:.82rem;color:var(--muted)"></div>
-    </div>`;
-  }
-  return h;
-}
-async function bulkUpdatePending(){
-  const pend=db.albums.filter(a=>a.pending&&a.isbn);
-  const out=document.getElementById("bulkOut");
-  let ok=0;
-  for(let i=0;i<pend.length;i++){
-    const a=pend[i];
-    out.textContent=`Vérification ${i+1}/${pend.length} : ${a.titre||a.isbn}…`;
-    const found=await tryFetchISBN(a.isbn);
-    if(found){
-      if(!a.cover&&found.cover) a.cover=found.cover;
-      if(!a.auteurs&&found.auteurs) a.auteurs=found.auteurs;
-      if(!a.editeur&&found.editeur) a.editeur=found.editeur;
-      if((!a.titre||a.titre===a.isbn)&&found.titre) a.titre=found.titre;
-      a.pending=false; ok++;
-    }
-    await new Promise(r=>setTimeout(r,400)); /* ménage l'API, évite le débit limité */
-  }
-  persist();
-  out.textContent=`Terminé : ${ok}/${pend.length} albums complétés.`;
-  render();toast(ok?`✓ ${ok} album${ok>1?"s":""} mis à jour`:"Aucune nouveauté pour l'instant");
-}
-/* factorisation : la même cascade que lookupISBN, mais sans toucher au formulaire */
-async function tryFetchISBN(isbnRaw){
-  const isbn=isbnRaw.replace(/[^0-9X]/gi,"");
-  if(isbn.length<10) return null;
-  for(const q of [`isbn:${isbn}`,`"${isbn}"`,isbn]){
-    try{
-      const r=await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&country=FR`);
-      if(!r.ok) continue;
-      const j=await r.json();
-      if(j.totalItems>0&&j.items){
-        const it=j.items.find(x=>((x.volumeInfo||{}).industryIdentifiers||[]).some(id=>id.identifier===isbn))||j.items[0];
-        const v=it.volumeInfo;
-        return {titre:v.title||"",auteurs:(v.authors||[]).join(", "),editeur:v.publisher||"",
-          cover:(v.imageLinks&&(v.imageLinks.thumbnail||v.imageLinks.smallThumbnail)||"").replace("http://","https://")};
-      }
-    }catch(e){}
-  }
-  try{
-    const r=await fetch(`https://openlibrary.org/api/books?bibkeys=ISBN:${isbn}&format=json&jscmd=data`);
-    const j=await r.json(); const v=j["ISBN:"+isbn];
-    if(v) return {titre:v.title||"",auteurs:(v.authors||[]).map(a=>a.name).join(", "),
-      editeur:(v.publishers||[]).map(p=>p.name).join(", "),
-      cover:(v.cover&&(v.cover.medium||v.cover.small))||`https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg`};
-  }catch(e){}
-  try{
-    const r=await fetchBnf(isbn);
-    if(r) return r;
-  }catch(e){}
+function cardDir(){ return cur.dir==="mix" ? (currentCard()._dir ||= (Math.random()<.5?"fr":"en")) : cur.dir; }
+function clozeText(c){
+  const target=coreText(c.verso).split("\n")[0].replace(/^(to|a|an|the)\s+/i,"").trim();
+  const w=target.split(/[\s\/,(]/)[0];
+  if(w.length<3) return null;
+  const lines=coreText(c.verso).split("\n").slice(1).concat(coreText(c.recto).split("\n"));
+  const re=new RegExp("\\b"+w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"[a-z]*","i");
+  for(const l of lines){ if(l.length>12 && re.test(l)) return l.replace(re,"_____").trim(); }
   return null;
 }
-
-/* ================= BnF : appel + nettoyage de la notice (V-B.1.6.3) =================
-   Le champ dc:title de la BnF contient souvent la notice complète
-   ("Titre. [Tome un] / scénario, X ; dessin, Y ; ..."). On la découpe :
-   titre propre / mentions de responsabilité (scénariste, dessinateur),
-   et on convertit "[Tome un]" -> tome:1 (mots français jusqu'à trente). */
-const FR_NUM={un:1,une:1,premier:1,deux:2,trois:3,quatre:4,cinq:5,six:6,sept:7,huit:8,neuf:9,dix:10,
-  onze:11,douze:12,treize:13,quatorze:14,quinze:15,seize:16,"dix-sept":17,"dix-huit":18,"dix-neuf":19,
-  vingt:20,"vingt-et-un":21,"vingt-deux":22,trente:30};
-function cleanBnfName(raw){
-  return String(raw||"")
-    .replace(/\s*\([^)]*\d[^)]*\)\s*/g," ")               /* dates de vie "(1973-....)" */
-    .replace(/\.\s*(Auteur du texte|Illustrateur|Traducteur|Coloriste|Scénariste|Dessinateur)\.?\s*$/i,"")
-    .replace(/\s{2,}/g," ").trim();
+function promptText(c){
+  if(cur.mode==="cloze"){ const z=clozeText(c); if(z) return "✂️ "+z; }
+  if(cur.mode==="exam") return cardDir()==="fr" ? coreText(c.recto) : coreText(c.verso);
+  return cardDir()==="fr" ? c.recto : coreText(c.verso);
 }
-function parseBnfTitle(raw){
-  const [titrePart,respPart]=String(raw||"").split(/\s*\/\s*/,2);
-  let tome=null;
-  const mB=titrePart&&titrePart.match(/\[\s*tome\s+([a-zàâéèêîïôûù-]+|\d+)\s*\]/i);
-  if(mB){ const w=mB[1].toLowerCase(); tome=/^\d+$/.test(w)?parseInt(w,10):(FR_NUM[w]||null); }
-  const titre=(titrePart||raw||"").replace(/\[[^\]]*\]/g,"").replace(/\.\s*$/,"").trim();
-  let auteurs="";
-  if(respPart){
-    const roles=[...respPart.matchAll(/(scénario|dessin|texte|dessin et couleur)\s*,\s*([^;]+)/gi)];
-    if(roles.length) auteurs=roles.map(m=>m[2].trim().replace(/\.\.\.$/,"").trim()).join(", ");
-  }
-  return {titre,tome,auteurs};
-}
-async function fetchCoverOnly(titre,auteurs,isbn){
-  /* 1) pari direct sur le générateur OpenLibrary (fonctionne parfois même
-     quand la fiche bibliographique complète est absente de leur API) */
-  try{
-    const guess=`https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false`;
-    const r=await fetch(guess,{method:"HEAD"});
-    if(r.ok) return guess;
-  }catch(e){}
-  /* 2) recherche Google Books par titre + auteur plutôt que par ISBN —
-     retrouve souvent une couverture même quand la fiche ISBN exacte manque */
-  try{
-    const auth=(auteurs||"").split(",")[0].trim();
-    const q=`intitle:${titre}${auth?` inauthor:${auth}`:""}`;
-    const r=await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&country=FR&maxResults=1`);
-    const j=await r.json();
-    const v=(j.items&&j.items[0]&&j.items[0].volumeInfo)||{};
-    const cov=(v.imageLinks&&(v.imageLinks.thumbnail||v.imageLinks.smallThumbnail)||"").replace("http://","https://");
-    if(cov) return cov;
-  }catch(e){}
-  return "";
-}
-async function fetchBnf(isbn){
-  const url=`https://catalogue.bnf.fr/api/SRU?version=1.2&operation=searchRetrieve&query=bib.isbn%3D%22${isbn}%22&recordSchema=dublincore&maximumRecords=1`;
-  const r=await fetch(url); const txt=await r.text();
-  const xml=new DOMParser().parseFromString(txt,"application/xml");
-  if(xml.querySelector("parsererror")) return null;
-  const rec=xml.querySelector("recordData")||xml;
-  const get=tag=>{const el=rec.getElementsByTagNameNS("*",tag)[0];return el?el.textContent.trim():"";};
-  const rawTitle=get("title"); if(!rawTitle) return null;
-  const {titre,tome,auteurs:auteursTitre}=parseBnfTitle(rawTitle);
-  const creators=[...rec.getElementsByTagNameNS("*","creator")].map(e=>cleanBnfName(e.textContent)).filter(Boolean);
-  const auteurs=auteursTitre||creators.join(", ");
-  const editeur=get("publisher").replace(/\s*\([^)]+\)\s*$/,"").trim(); /* retire "(Paris)" */
-  const cover=await fetchCoverOnly(titre,auteurs,isbn); /* V-B.1.6.3 : couverture de secours */
-  return {titre,tome,auteurs,editeur,cover,resume:"",source:"bnf"};
-}
-
-/* ================= Ajout / édition ================= */
-function openAdd(){
-  clearForm();
-  document.getElementById("ovAdd").classList.add("open");
-  refreshSerieList();
-}
-function openEdit(id){
-  const a=db.albums.find(x=>x.id===id); if(!a)return;
-  closeSheet("ovSerie"); clearForm(); refreshSerieList();
-  document.getElementById("fEditId").value=a.id;
-  document.getElementById("fSerie").value=a.serie||"";
-  document.getElementById("fType").value=a.type||"BD";
-  document.getElementById("fTome").value=a.tome||"";
-  document.getElementById("fTitre").value=a.titre||"";
-  document.getElementById("fAuteurs").value=a.auteurs||"";
-  document.getElementById("fEditeur").value=a.editeur||"";
-  document.getElementById("fCover").value=a.cover||"";
-  showCoverPreview(a.cover||"");
-  document.getElementById("fNotes").value=a.notes||"";
-  document.getElementById("isbnInput").value=a.isbn||"";
-  document.getElementById("cOwn").classList.toggle("on",!!a.possede);
-  document.getElementById("cLu").classList.toggle("on",!!a.lu);
-  document.getElementById("cEO").classList.toggle("on",!!a.eo);
-  document.getElementById("cDed").classList.toggle("on",!!a.dedicace);
-  const sup=Array.isArray(a.support)?a.support:["physique"];
-  document.getElementById("cPhys").classList.toggle("on",sup.includes("physique"));
-  document.getElementById("cScan").classList.toggle("on",sup.includes("scan"));
-  document.getElementById("cPending").classList.toggle("on",!!a.pending);
-  document.getElementById("btnDelete").style.display="block";
-  /* champ prêt */
-  addPretField(a.prete||"");
-  document.getElementById("ovAdd").classList.add("open");
-}
-function addPretField(val){
-  let f=document.getElementById("fPrete");
-  if(!f){
-    const div=document.createElement("div");
-    div.innerHTML=`<label>Prêté à (laisser vide si non prêté)</label><input type="text" id="fPrete">`;
-    document.getElementById("fNotes").parentNode.insertBefore(div,document.getElementById("fNotes").nextSibling);
-    f=document.getElementById("fPrete");
-  }
-  f.value=val;
-}
-function checkSerieMatch(){
-  const val=document.getElementById("fSerie").value.trim();
-  const w=document.getElementById("serieWarn");
-  if(!val){w.innerHTML="";return;}
-  const editId=document.getElementById("fEditId").value;
-  const exact=seriesMap().find(s=>s.nom.toLowerCase()===val.toLowerCase()&&s.nom!==val);
-  const proche=!exact&&seriesMap().find(s=>s.nom!==val&&(s.nom.toLowerCase().includes(val.toLowerCase())||val.toLowerCase().includes(s.nom.toLowerCase()))&&val.length>2);
-  if(exact){
-    w.innerHTML=`<p style="font-size:.78rem;color:var(--blue);margin-top:4px">ℹ️ Différence de casse avec la série existante « ${esc(exact.nom)} » (${exact.albums.length} albums) — touche pour corriger l'orthographe.</p>
-      <button type="button" class="chip" onclick="document.getElementById('fSerie').value='${esc(exact.nom)}';checkSerieMatch()">Utiliser « ${esc(exact.nom)} »</button>`;
-  }else if(proche&&!editId){
-    w.innerHTML=`<p style="font-size:.78rem;color:var(--red);margin-top:4px">⚠️ Nom proche d'une série existante : « ${esc(proche.nom)} » (${proche.albums.length} albums). Vérifie que ce n'est pas la même avant d'enregistrer, sinon cet album ira dans la mauvaise série.</p>`;
-  }else w.innerHTML="";
-}
-function clearForm(){
-  ["fSerie","fTome","fTitre","fAuteurs","fEditeur","fCover","fNotes","isbnInput","fEditId","titleSearch"].forEach(i=>document.getElementById(i).value="");
-  document.getElementById("titleOut").innerHTML="";
-  document.getElementById("fType").value="BD";
-  document.getElementById("cOwn").classList.add("on");
-  ["cLu","cEO","cDed","cScan"].forEach(i=>document.getElementById(i).classList.remove("on"));
-  document.getElementById("cPhys").classList.add("on");
-  document.getElementById("cPending").classList.remove("on");
-  document.getElementById("btnDelete").style.display="none";
-  document.getElementById("lookupOut").innerHTML="";
-  document.getElementById("serieWarn").innerHTML="";
-  document.getElementById("coverPreview").innerHTML="";
-  addPretField("");
-  stopScan();
-}
-function refreshSerieList(){
-  document.getElementById("serieList").innerHTML=[...new Set(db.albums.map(a=>a.serie).filter(Boolean))].map(s=>`<option value="${esc(s)}">`).join("");
-}
-function saveAlbum(){
-  const serie=document.getElementById("fSerie").value.trim();
-  const titre=document.getElementById("fTitre").value.trim();
-  if(!serie&&!titre){toast("Indique au moins une série ou un titre");return;}
-  const id=document.getElementById("fEditId").value;
-  const data={
-    serie:serie||titre, type:document.getElementById("fType").value,
-    tome:parseInt(document.getElementById("fTome").value,10)||0,
-    titre:titre||serie, isbn:document.getElementById("isbnInput").value.trim(),
-    auteurs:document.getElementById("fAuteurs").value.trim(),
-    editeur:document.getElementById("fEditeur").value.trim(),
-    cover:document.getElementById("fCover").value.trim(),
-    notes:document.getElementById("fNotes").value.trim(),
-    possede:document.getElementById("cOwn").classList.contains("on"),
-    lu:document.getElementById("cLu").classList.contains("on"),
-    eo:document.getElementById("cEO").classList.contains("on"),
-    dedicace:document.getElementById("cDed").classList.contains("on"),
-    prete:(document.getElementById("fPrete")||{value:""}).value.trim(),
-    support:[document.getElementById("cPhys").classList.contains("on")?"physique":null,
-             document.getElementById("cScan").classList.contains("on")?"scan":null].filter(Boolean),
-    pending:document.getElementById("cPending").classList.contains("on"),
-  };
-  if(!data.support.length) data.support=["physique"];
-  if(id){Object.assign(db.albums.find(x=>x.id===id),data);toast("Album mis à jour");}
-  else{db.albums.push({id:uid(),dateAjout:new Date().toISOString(),...data});toast("Album ajouté 📚");}
-  persist();closeSheet("ovAdd");go("coll");
-}
-function deleteAlbum(){
-  const id=document.getElementById("fEditId").value; if(!id)return;
-  if(!confirm("Supprimer définitivement cet album ?"))return;
-  db.albums=db.albums.filter(a=>a.id!==id);
-  persist();closeSheet("ovAdd");render();toast("Album supprimé");
-}
-function closeSheet(id){document.getElementById(id).classList.remove("open");if(id==="ovAdd")stopScan();}
-
-/* ================= Couverture depuis les photos (V-B.1.6.3) =================
-   Compression côté client pour rester léger dans le stockage du navigateur
-   (localStorage ~5-10 Mo au total selon les appareils). */
-function handleCoverFile(ev){
-  const file=ev.target.files[0]; if(!file)return;
-  const img=new Image();
-  const reader=new FileReader();
-  reader.onload=()=>{
-    img.onload=()=>{
-      const maxW=280;
-      const scale=Math.min(1,maxW/img.width);
-      const canvas=document.createElement("canvas");
-      canvas.width=Math.round(img.width*scale);
-      canvas.height=Math.round(img.height*scale);
-      const ctx=canvas.getContext("2d");
-      ctx.drawImage(img,0,0,canvas.width,canvas.height);
-      const dataUrl=canvas.toDataURL("image/jpeg",0.75);
-      document.getElementById("fCover").value=dataUrl;
-      showCoverPreview(dataUrl);
-      toast("Photo ajoutée ✓");
-    };
-    img.src=reader.result;
-  };
-  reader.onerror=()=>toast("Impossible de lire cette photo");
-  reader.readAsDataURL(file);
-  ev.target.value="";
-}
-function showCoverPreview(url){
-  const p=document.getElementById("coverPreview");
-  p.innerHTML=url?`<img src="${esc(url)}" style="width:70px;height:96px;object-fit:cover;border-radius:4px;margin-top:8px" alt="">`:"";
-}
-
-/* ================= Recherche par titre (V-B.1.6.3) ================= */
-let _titleResults=[];
-async function searchByTitle(){
-  const q=document.getElementById("titleSearch").value.trim();
-  if(q.length<3){toast("Tape au moins 3 caractères");return;}
-  const out=document.getElementById("titleOut");
-  out.innerHTML=`<p style="margin-top:10px;color:var(--muted)">Recherche en cours…</p>`;
-  let items=[];
-  try{
-    const r=await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=12&langRestrict=fr&country=FR&printType=books&orderBy=relevance`);
-    if(!r.ok){const t=await r.text();out.innerHTML=`<p style="color:var(--red);margin-top:10px;font-size:.82rem">Erreur API ${r.status} : ${esc(t.slice(0,300))}</p>`;return;}
-    const j=await r.json(); items=j.items||[];
-  }catch(e){out.innerHTML=`<p style="color:var(--red);margin-top:10px;font-size:.82rem">Appel réseau impossible (${esc(e.message)}). Si tu es sur un Wi-Fi filtré (travail), passe en 4G et réessaie.</p>`;return;}
-  if(!items.length){out.innerHTML=`<p style="color:var(--muted);margin-top:10px">Aucun résultat pour « ${esc(q)} ». Essaie avec le nom de la série seul.</p>`;return;}
-  _titleResults=items.map(it=>{
-    const v=it.volumeInfo||{};
-    return {titre:v.title||"",soustitre:v.subtitle||"",auteurs:(v.authors||[]).join(", "),
-      editeur:v.publisher||"",date:(v.publishedDate||"").slice(0,4),
-      isbn:((v.industryIdentifiers||[]).find(x=>x.type==="ISBN_13")||{}).identifier||"",
-      cover:(v.imageLinks&&(v.imageLinks.thumbnail||v.imageLinks.smallThumbnail)||"").replace("http://","https://")};
+function answerText(c){ return cardDir()==="fr" ? c.verso : c.recto; }
+function answerCore(c){ return coreText(answerText(c)); }
+function showCard(){
+  const c=currentCard(); delete c._dir; const dir=cardDir();
+  cur.revealed=false;
+  const f=document.getElementById("fiche");
+  f.classList.remove("revealed");
+  document.getElementById("tagQ").textContent = dir==="fr"?"Français":"English";
+  document.getElementById("tagA").textContent = dir==="fr"?"English":"Français";
+  const wf=document.getElementById("wFront"), wb=document.getElementById("wBack");
+  wf.textContent=promptText(c); wb.textContent=answerText(c);
+  [wf,wb].forEach(el=>{
+    el.classList.remove("long","med");
+    const n=el.textContent.length;
+    if(n>160) el.classList.add("long"); else if(n>60) el.classList.add("med");
+    el.scrollTop=0;
   });
-  out.innerHTML=`<p style="font-size:.8rem;color:var(--muted);margin-top:8px">Touche le bon album pour remplir la fiche :</p>`+
-    _titleResults.map((x,i)=>`<div class="album-row" onclick="pickTitleResult(${i})">
-      ${x.cover?`<img class="cover" src="${esc(x.cover)}" alt="">`:`<div class="cover">?</div>`}
-      <div class="album-info"><b>${esc(x.titre)}${x.soustitre?" — "+esc(x.soustitre):""}</b>
-        <small>${esc(x.auteurs)}${x.editeur?" · "+esc(x.editeur):""}${x.date?" · "+x.date:""}</small>
-        <small>${x.isbn?"ISBN "+esc(x.isbn):""}</small></div></div>`).join("");
-}
-function pickTitleResult(i){
-  const x=_titleResults[i]; if(!x)return;
-  const full=x.titre+(x.soustitre?" "+x.soustitre:"");
-  document.getElementById("fTitre").value=full;
-  document.getElementById("fAuteurs").value=x.auteurs;
-  document.getElementById("fEditeur").value=x.editeur;
-  document.getElementById("fCover").value=x.cover;
-  document.getElementById("isbnInput").value=x.isbn;
-  const m=full.match(/^(.*?)[,–-]?\s*(?:tome|t\.?|vol\.?|#)\s*(\d+)/i);
-  if(m){document.getElementById("fSerie").value=m[1].trim();document.getElementById("fTome").value=m[2];}
-  else document.getElementById("fSerie").value=document.getElementById("fSerie").value||x.titre;
-  checkSerieMatch();
-  document.getElementById("titleOut").innerHTML="";
-  toast("Fiche pré-remplie — vérifie et complète ✓");
-}
-
-/* ================= Recherche ISBN (Google Books puis OpenLibrary) ================= */
-async function lookupISBN(){
-  const isbn=document.getElementById("isbnInput").value.replace(/[^0-9X]/gi,"");
-  if(isbn.length<10){toast("ISBN incomplet");return;}
-  const out=document.getElementById("lookupOut");
-  out.innerHTML=`<p style="margin-top:10px;color:var(--muted)">Recherche en cours…</p>`;
-  let found=null;
-  /* cascade : l'API Google Books rate souvent des ISBN (surtout 979-) via "isbn:" ;
-     on retente alors en recherche libre sur le numéro. (bug corrigé V-B.1.6.3) */
-  const gbQueries=[`isbn:${isbn}`,`"${isbn}"`,isbn];
-  let lastErr="";
-  for(const q of gbQueries){
-    if(found)break;
-    try{
-      const r=await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&country=FR`);
-      if(!r.ok){lastErr=`API ${r.status}`;const t=await r.text();lastErr+=" "+t.slice(0,200);continue;}
-      const j=await r.json();
-      if(j.totalItems>0&&j.items){
-        /* privilégier l'item dont l'ISBN correspond exactement */
-        const it=j.items.find(x=>((x.volumeInfo||{}).industryIdentifiers||[]).some(id=>id.identifier===isbn))||j.items[0];
-        const v=it.volumeInfo;
-        found={titre:v.title||"",auteurs:(v.authors||[]).join(", "),editeur:v.publisher||"",
-          cover:(v.imageLinks&&(v.imageLinks.thumbnail||v.imageLinks.smallThumbnail)||"").replace("http://","https://"),
-          resume:v.description||""};
-      }
-    }catch(e){lastErr="réseau : "+e.message;}
-  }
-  if(!found){
-    try{
-      const r=await fetch(`https://openlibrary.org/api/books?bibkeys=ISBN:${isbn}&format=json&jscmd=data`);
-      const j=await r.json(); const v=j["ISBN:"+isbn];
-      if(v) found={titre:v.title||"",auteurs:(v.authors||[]).map(a=>a.name).join(", "),
-        editeur:(v.publishers||[]).map(p=>p.name).join(", "),
-        cover:(v.cover&&(v.cover.medium||v.cover.small))||`https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg`,resume:""};
-    }catch(e){if(!lastErr)lastErr="réseau : "+e.message;}
-  }
-  /* 3e recours : BnF (catalogue général, SRU/Dublin Core) — très complet sur l'édition
-     française mais pas d'image de couverture, et notice brute à nettoyer (V-B.1.6.3) */
-  if(!found){
-    try{ found=await fetchBnf(isbn); }
-    catch(e){if(!lastErr)lastErr="BnF : "+e.message;}
-  }
-  if(!found){out.innerHTML=`<p style="margin-top:10px;color:var(--red);font-weight:600">Introuvable dans Google Books, OpenLibrary et la BnF — probablement une parution trop récente pour ces catalogues.</p>
-    <a href="https://www.google.com/search?q=${isbn}" target="_blank" rel="noopener" class="btn secondary" style="display:block;text-align:center;text-decoration:none;margin-top:8px">🔍 Chercher « ${esc(isbn)} » sur Google</a>
-    <p style="font-size:.78rem;color:var(--muted);margin-top:6px">Ouvre le résultat, recopie titre/auteur/éditeur ci-dessous, et pour la couverture : appuie longuement sur l'image du livre → Copier l'image → colle son adresse si ton navigateur le permet, ou laisse vide.</p>
-    ${lastErr?`<p style="font-size:.72rem;color:var(--muted)">Détail technique : ${esc(lastErr)}</p>`:""}`;return;}
-  document.getElementById("fTitre").value=found.titre;
-  document.getElementById("fAuteurs").value=found.auteurs;
-  document.getElementById("fEditeur").value=found.editeur;
-  document.getElementById("fCover").value=found.cover;
-  /* devine série + tome depuis le titre : "Titre, Tome 3" / "Titre T3" / "Titre - 3" */
-  const m=found.titre.match(/^(.*?)[,–-]?\s*(?:tome|t\.?|vol\.?|#)\s*(\d+)/i);
-  if(found.tome){document.getElementById("fSerie").value=found.titre.trim();document.getElementById("fTome").value=found.tome;}
-  else if(m){document.getElementById("fSerie").value=m[1].trim();document.getElementById("fTome").value=m[2];}
-  checkSerieMatch();
-  checkSerieMatch();
-  out.innerHTML=(found.source==="bnf"&&!found.cover)
-    ? `<div class="lookup-result"><div class="cover">?</div>
-      <div style="font-size:.88rem"><b>${esc(found.titre)}</b><br>
-      <span style="color:var(--muted)">${esc(found.auteurs)}${found.editeur?" · "+esc(found.editeur):""}</span><br>
-      <span style="color:var(--ok);font-weight:700">✓ Fiche trouvée via la BnF</span> — pas de couverture disponible, ajoute une image si tu en as une.</div></div>`
-    : `<div class="lookup-result">
-    ${found.cover?`<img class="cover" src="${esc(found.cover)}" alt="">`:""}
-    <div style="font-size:.88rem"><b>${esc(found.titre)}</b><br>
-    <span style="color:var(--muted)">${esc(found.auteurs)}${found.editeur?" · "+esc(found.editeur):""}</span><br>
-    <span style="color:var(--ok);font-weight:700">✓ Fiche pré-remplie${found.source==="bnf"?" (BnF + couverture retrouvée)":""} — vérifie et complète</span></div></div>`;
-}
-
-/* ================= Scanner code-barres =================
-   Voie 1 : API native BarcodeDetector (Chrome/Android).
-   Voie 2 (REX Safari iOS) : bibliothèque ZXing chargée à la volée. */
-let scanStream=null,scanTimer=null,detector=null,zxingReader=null;
-function loadZXing(){
-  return new Promise((res,rej)=>{
-    if(window.ZXing)return res();
-    const s=document.createElement("script");
-    s.src="https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js";
-    s.onload=res; s.onerror=()=>rej(new Error("cdn"));
-    document.head.appendChild(s);
-  });
-}
-async function toggleScan(){
-  const box=document.getElementById("scanBox");
-  if(box.classList.contains("on")){stopScan();return;}
-  const video=document.getElementById("scanVideo");
-  const native=("BarcodeDetector" in window);
-  if(!native){
-    try{await loadZXing();}
-    catch(e){toast("Scanner indisponible (pas de réseau ?) — saisis l'ISBN au clavier");return;}
-  }
-  try{
-    scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
-  }catch(e){toast("Accès caméra refusé — autorise-le dans Réglages > Safari");return;}
-  video.srcObject=scanStream; await video.play();
-  box.classList.add("on");
-  document.getElementById("btnScan").textContent="⏹ Arrêter le scan";
-  if(native){
-    try{detector=detector||new BarcodeDetector({formats:["ean_13","ean_8"]});}
-    catch(e){detector=new BarcodeDetector();}
-    scanTimer=setInterval(async()=>{
-      try{
-        const codes=await detector.detect(video);
-        if(codes.length)onScanValue(codes[0].rawValue);
-      }catch(e){}
-    },350);
+  document.getElementById("favBtn").classList.toggle("on", !!c.fav);
+  document.getElementById("stProg").textContent=`Carte ${cur.idx+1} / ${cur.queue.length}${cur.again.length?` · ${cur.again.length} à repasser`:""}`;
+  document.getElementById("confidRow").style.visibility="hidden";
+  document.getElementById("verdict").textContent=""; document.getElementById("verdict").className="verdict";
+  const tb=document.getElementById("typeBox"), qb=document.getElementById("qcmBox");
+  tb.style.display = cur.mode==="type" ? "" : "none";
+  qb.style.display = (cur.mode==="qcm"||cur.mode==="exam") ? "" : "none";
+  if(cur.mode==="exam"){
+    document.getElementById("stHint").textContent="🎓 Examen — choisis la bonne réponse";
+    document.getElementById("stProg").textContent=`Question ${cur.idx+1} / ${cur.queue.length} · ⏱ en cours`;
+    buildQcm(c);
+  }else if(cur.mode==="type"){
+    document.getElementById("stHint").textContent="Écris la réponse puis vérifie";
+    const inp=document.getElementById("typeInput"); inp.value=""; inp.disabled=false;
+    document.getElementById("btnCheck").disabled=false;
+  }else if(cur.mode==="qcm"){
+    document.getElementById("stHint").textContent="Choisis la bonne réponse";
+    buildQcm(c);
+  }else if(cur.mode==="cloze"){
+    document.getElementById("stHint").textContent="Devine le mot masqué, puis touche la fiche";
   }else{
-    zxingReader=new ZXing.BrowserMultiFormatReader();
-    zxingReader.decodeFromStream(scanStream,video,(result)=>{
-      if(result)onScanValue(result.getText());
-    }).catch(()=>{});
+    document.getElementById("stHint").textContent="Touche la fiche pour voir la réponse";
   }
 }
-function onScanValue(raw){
-  const val=String(raw||"").replace(/[^0-9X]/gi,"");
-  if(val.length<10)return;
-  document.getElementById("isbnInput").value=val;
-  stopScan(); if(navigator.vibrate)navigator.vibrate(80);
-  toast("Code-barres lu ✓"); lookupISBN();
+document.getElementById("fiche").addEventListener("click",e=>{
+  if(e.target.id==="favBtn"||e.target.id==="collapseBtn") return;
+  const f=document.getElementById("fiche");
+  if(cur.mode==="flip"||cur.mode==="cloze"){
+    if(!f.classList.contains("revealed")){ reveal(); }
+    else { collapse(); }
+    return;
+  }
+  // en saisie/QCM : afficher/replier librement apres la reponse
+  if(cur.revealed){ f.classList.contains("revealed") ? collapse() : f.classList.add("revealed"); }
+});
+document.getElementById("collapseBtn").addEventListener("click",collapse);
+// glissement vers le haut sur la fiche = replier la reponse
+(function(){
+  let y0=null,x0=null,scrolled=false;
+  const f=document.getElementById("fiche");
+  f.addEventListener("touchstart",e=>{ y0=e.touches[0].clientY; x0=e.touches[0].clientX; scrolled=false;
+    const w=e.target.closest(".word"); if(w && w.scrollHeight>w.clientHeight) scrolled=true; },{passive:true});
+  f.addEventListener("touchend",e=>{
+    if(y0===null||scrolled) { y0=null; return; }
+    const dy=e.changedTouches[0].clientY-y0, dx=Math.abs(e.changedTouches[0].clientX-x0);
+    if(dy<-60 && dx<50 && f.classList.contains("revealed")) collapse();
+    y0=null;
+  },{passive:true});
+})();
+function speakEN(){
+  if(!window.speechSynthesis){ toast("Synthèse vocale indisponible"); return; }
+  const c=currentCard();
+  const txt = coreText(cardDir()==="fr" ? c.verso : c.verso); // le côté anglais est toujours le verso
+  const u=new SpeechSynthesisUtterance(txt.split("\n")[0]);
+  u.lang="en-GB"; u.rate=0.95;
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
 }
-function stopScan(){
-  if(scanTimer){clearInterval(scanTimer);scanTimer=null;}
-  if(zxingReader){try{zxingReader.reset();}catch(e){}zxingReader=null;}
-  if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null;}
-  const v=document.getElementById("scanVideo"); if(v)v.srcObject=null;
-  document.getElementById("scanBox").classList.remove("on");
-  const b=document.getElementById("btnScan"); if(b)b.textContent="📷 Scanner le code-barres";
+document.getElementById("speakBtn").addEventListener("click",e=>{ e.stopPropagation(); speakEN(); });
+function collapse(){
+  document.getElementById("fiche").classList.remove("revealed");
+  document.getElementById("stHint").textContent="Touche la fiche pour revoir la réponse";
 }
+function reveal(){
+  cur.revealed=true;
+  document.getElementById("fiche").classList.add("revealed");
+  document.getElementById("confidRow").style.visibility="visible";
+  document.getElementById("stHint").textContent="Note ta confiance · glisse vers le haut pour replier";
+  if(db.autoSpeak) speakEN();
+}
+/* --- saisie tolérante --- */
+function norm(s){
+  return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/^(to|a|an|the|un|une|le|la|les|l')\s+/,"")
+    .replace(/[^a-z0-9\s'-]/g," ").replace(/\s+/g," ").trim();
+}
+function lev(a,b){
+  const m=a.length,n=b.length; if(!m) return n; if(!n) return m;
+  let prev=[...Array(n+1).keys()];
+  for(let i=1;i<=m;i++){ const row=[i];
+    for(let j=1;j<=n;j++) row[j]=Math.min(prev[j]+1,row[j-1]+1,prev[j-1]+(a[i-1]!==b[j-1]?1:0));
+    prev=row; }
+  return prev[n];
+}
+function isCorrect(typed, answer){
+  const t=norm(typed); if(!t) return false;
+  // candidats : 1re ligne + segments séparés par / , = ;
+  const first=answer.split(/\n/)[0];
+  const cands=(first+" / "+answer).split(/[\/,;=•→]/).map(norm).filter(x=>x&&x.length>1);
+  const tol=w=>w.length>8?2:w.length>4?1:0;
+  return cands.some(c=> c===t || lev(c,t)<=tol(c) || (t.length>3 && c.split(" ").includes(t)) );
+}
+document.getElementById("btnCheck").addEventListener("click",()=>{
+  const c=currentCard(), typed=document.getElementById("typeInput").value;
+  const ok=isCorrect(typed, answerCore(c));
+  const v=document.getElementById("verdict");
+  v.textContent= ok ? "✓ Correct !" : "✗ Raté — la réponse était :";
+  v.className="verdict "+(ok?"good":"bad");
+  document.getElementById("typeInput").disabled=true;
+  document.getElementById("btnCheck").disabled=true;
+  reveal();
+});
+document.getElementById("typeInput").addEventListener("keydown",e=>{
+  if(e.key==="Enter" && !document.getElementById("btnCheck").disabled) document.getElementById("btnCheck").click();
+});
+/* --- QCM --- */
+function buildQcm(c){
+  const box=document.getElementById("qcmBox"); box.innerHTML="";
+  const good=answerCore(c);
+  const firstLine=s=>s.split(/\n/)[0].trim();
+  const others=shuffle(allCards().filter(x=>x.id!==c.id)).slice(0,40)
+    .map(x=> coreText(cardDir()==="fr"?x.verso:x.recto))
+    .filter(a=>a && norm(firstLine(a))!==norm(firstLine(good)));
+  const opts=shuffle([good, ...others.slice(0,3)]);
+  opts.forEach(o=>{
+    const b=document.createElement("button");
+    b.textContent=firstLine(o);
+    b.addEventListener("click",()=>{
+      const ok=(o===good);
+      box.querySelectorAll("button").forEach(x=>{
+        x.disabled=true;
+        if(x.textContent===firstLine(good)) x.classList.add("good");
+      });
+      if(!ok) b.classList.add("bad");
+      const v=document.getElementById("verdict");
+      v.textContent= ok?"✓ Correct !":"✗ Raté";
+      v.className="verdict "+(ok?"good":"bad");
+      if(cur.mode==="exam"){
+        cur.seen++; if(ok) cur.ok++;
+        setTimeout(nextCard, ok?600:1400);
+        return;
+      }
+      reveal();
+    });
+    box.appendChild(b);
+  });
+}
+document.getElementById("favBtn").addEventListener("click",()=>{
+  const c=currentCard(); c.fav=!c.fav; save();
+  document.getElementById("favBtn").classList.toggle("on", c.fav);
+  toast(c.fav?"Ajouté aux favoris ★":"Retiré des favoris");
+});
+document.querySelectorAll(".confid button").forEach(b=>b.addEventListener("click",()=>{
+  const n=+b.dataset.c, c=currentCard();
+  cur.undo={c, prev:{lastC:c.lastC, streak:c.streak, due:c.due, fails:c.fails||0}, again:(n<=2), ok:(n>=4)};
+  c.lastC=n;
+  c.streak = n>=4 ? (c.streak||0)+1 : 0;
+  const mult=Math.max(1, c.streak);
+  let days = BASE_INT[n]*mult;
+  // règles favoris : <5 → plafond 1 jour ; 5 → plafond 7 jours
+  if(c.fav) days = Math.min(days, n<5 ? FAV_CAP_LOW : FAV_CAP_TOP);
+  c.due = Date.now() + days*DAY;
+  if(n<=2){ cur.again.push(c); c.fails=(c.fails||0)+1;
+    if(c.fails===5) toast("⚠ Carte ratée 5 fois : pense à la reformuler (✎)"); }
+  cur.seen++;
+  if(n>=4) cur.ok++;
+  db.totalAnswers++; if(n>=4) db.totalSuccess++;
+  logDay(n>=4);
+  save(); nextCard();
+}));
+document.getElementById("undoBtn").addEventListener("click",()=>{
+  const u=cur.undo; if(!u) return;
+  Object.assign(u.c, u.prev);
+  if(u.again){ const i=cur.again.lastIndexOf(u.c); if(i>-1) cur.again.splice(i,1); }
+  cur.seen--; if(u.ok) cur.ok--;
+  db.totalAnswers=Math.max(0,db.totalAnswers-1); if(u.ok) db.totalSuccess=Math.max(0,db.totalSuccess-1);
+  const k=todayKey(); if(db.history&&db.history[k]){ db.history[k].a=Math.max(0,db.history[k].a-1); if(u.ok) db.history[k].s=Math.max(0,db.history[k].s-1); }
+  save();
+  cur.undo=null; document.getElementById("undoBtn").classList.remove("show");
+  // revenir sur la carte annulée
+  document.getElementById("doneBox").style.display="none";
+  document.getElementById("fiche").style.display="";
+  document.getElementById("confidRow").style.display="";
+  cur.idx--; showCard();
+  toast("Note annulée");
+});
+function startExam(cards){
+  cur.mode="exam";
+  cur.pool=[]; cur.again=[];
+  cur.queue=shuffle(cards.slice()).slice(0,20);
+  cur.idx=0; cur.seen=0; cur.ok=0; cur.examT0=Date.now();
+  document.getElementById("doneBox").style.display="none";
+  document.getElementById("fiche").style.display="";
+  document.getElementById("confidRow").style.display="none";
+  nav("study"); showCard();
+}
+function nextCard(){
+  if(cur.mode!=="exam") document.getElementById("undoBtn").classList.add("show");
+  cur.idx++;
+  if(cur.idx>=cur.queue.length){
+    if(cur.mode==="exam"){
+      const secs=((Date.now()-cur.examT0)/1000).toFixed(0);
+      document.getElementById("fiche").style.display="none";
+      document.getElementById("qcmBox").style.display="none";
+      document.getElementById("stHint").textContent="";
+      document.getElementById("stProg").textContent="";
+      document.getElementById("doneBox").style.display="";
+      document.getElementById("doneBig").textContent=cur.ok+" / "+cur.queue.length;
+      document.getElementById("doneBig").style.color = cur.ok>=cur.queue.length*0.8?"var(--green)":cur.ok>=cur.queue.length*0.5?"var(--amber)":"var(--red)";
+      document.getElementById("doneNote").textContent=`Examen terminé en ${secs} s. Sans impact sur ta planification.`;
+      document.getElementById("btnMore").style.display="none";
+      return;
+    }
+    const score=cur.seen? Math.round(cur.ok/cur.seen*100):0;
+    const global=db.totalAnswers? Math.round(db.totalSuccess/db.totalAnswers*100):0;
+    document.getElementById("fiche").style.display="none";
+    document.getElementById("confidRow").style.display="none";
+    document.getElementById("stHint").textContent="";
+    document.getElementById("stProg").textContent="";
+    document.getElementById("doneBox").style.display="";
+    document.getElementById("doneBig").textContent=score+"%";
+    document.getElementById("doneBig").style.color = score>=80?"var(--green)":score>=50?"var(--amber)":"var(--red)";
+    const rest=cur.pool.length + cur.again.length;
+    document.getElementById("doneNote").textContent=`Réussite de la manche : ${cur.ok}/${cur.seen} (notes 4–5). Score global : ${global}%.`;
+    const btnMore=document.getElementById("btnMore");
+    btnMore.style.display = rest? "":"none";
+    btnMore.textContent = `Continuer (${Math.min(BATCH,rest)} cartes)`;
+    return;
+  }
+  showCard();
+}
+document.getElementById("btnMore").addEventListener("click",()=>nextBatch());
+document.getElementById("studyBack").addEventListener("click",()=>{
+  const inProgress = cur.queue && cur.idx<cur.queue.length && document.getElementById("doneBox").style.display==="none";
+  if(inProgress && cur.seen>0 && !confirm("Quitter la session en cours ? Les cartes déjà notées sont enregistrées.")) return;
+  nav("decks");
+});
 
-/* ================= Export / Import ================= */
-function exportJSON(){
-  const blob=new Blob([JSON.stringify({app:"MaBDtheque",version:APP_VERSION,exporte:new Date().toISOString(),albums:db.albums,series:db.series},null,1)],{type:"application/json"});
+/* ---------- export / import JSON ---------- */
+document.getElementById("btnExport").addEventListener("click",()=>{
+  const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"});
   const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download=`mabdtheque_${new Date().toISOString().slice(0,10)}.json`;
-  document.body.appendChild(a);a.click();a.remove();
+  const d=new Date(), pad=n=>String(n).padStart(2,"0");
+  a.download=`fiches_anglais_${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}.json`;
+  a.href=URL.createObjectURL(blob); a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href),4000);
-  toast("Export prêt — enregistre-le dans iCloud Drive via la feuille de partage");
+  db.lastExport=Date.now(); save();
+  toast("Fichier généré → Enregistrer dans Fichiers / iCloud Drive");
+});
+document.getElementById("btnImport").addEventListener("click",()=>document.getElementById("fileJson").click());
+document.getElementById("fileJson").addEventListener("change",async e=>{
+  const f=e.target.files[0]; if(!f) return;
+  try{
+    const inc=JSON.parse(await f.text());
+    if(!inc.decks || !Array.isArray(inc.decks)) throw 0;
+    if(!db.decks.length){ // app vide : chargement direct
+      db=normalizeDb(inc); save(); toast("Cartes chargées ✓"); nav("decks"); e.target.value=""; return;
+    }
+    const r=mergeInto(db, inc); save();
+    toast(r.added+r.variants ? `${r.added+r.variants} carte(s) ajoutée(s) ✓` : "Rien de nouveau : tout était déjà là ✓");
+    nav("decks");
+  }catch(_){ toast("Fichier invalide"); }
+  e.target.value="";
+});
+// garantit les champs attendus sur une base importée
+function normalizeDb(d){
+  d.version=APP_VERSION; d.totalAnswers=d.totalAnswers||0; d.totalSuccess=d.totalSuccess||0;
+  d.decks.forEach(dk=>{ dk.id=dk.id||uid(); (dk.cards||[]).forEach(c=>{
+    c.id=c.id||uid(); c.fav=!!c.fav; c.lastC=c.lastC||0; c.streak=c.streak||0; c.due=c.due||0;
+  }); });
+  return d;
 }
-function importJSON(ev){
-  const f=ev.target.files[0]; if(!f)return;
-  const r=new FileReader();
-  r.onload=()=>{
-    try{
-      const j=JSON.parse(r.result);
-      const albums=Array.isArray(j)?j:(j.albums||[]);
-      if(!Array.isArray(albums)) throw 0;
-      if(!confirm(`Importer ${albums.length} albums ? Cela remplace la collection actuelle (${db.albums.length} albums).`))return;
-      db.albums=albums; db.series=(j.series&&typeof j.series==="object")?j.series:{};
-      for(const a of db.albums) if(!Array.isArray(a.support)) a.support=["physique"];
-      persist(); render(); toast("Import réussi ✓");
-    }catch(e){toast("Fichier invalide");}
-  };
-  r.readAsText(f); ev.target.value="";
+// clé de comparaison : recto+verso normalisés (accents/casse/espaces ignorés)
+function cardKey(c){ return normKey(c.recto)+" ⇔ "+normKey(c.verso); }
+function normKey(s){ return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ").trim(); }
+function mergeInto(base, inc){
+  let added=0, variants=0, skipped=0, newDecks=0;
+  inc.decks.forEach(idk=>{
+    let target=base.decks.find(d=>d.name.trim().toLowerCase()===(idk.name||"").trim().toLowerCase());
+    if(!target){ target={id:uid(), name:idk.name||"Sans nom", cards:[]}; base.decks.push(target); newDecks++; }
+    const byPair=new Set(target.cards.map(cardKey));
+    const byRecto=new Set(target.cards.map(c=>normKey(c.recto)));
+    (idk.cards||[]).forEach(c=>{
+      const nc={id:uid(), recto:c.recto, verso:c.verso, fav:!!c.fav, lastC:c.lastC||0, streak:c.streak||0, due:c.due||0};
+      const k=cardKey(nc);
+      if(byPair.has(k)){ skipped++; return; }              // identique → on garde la version locale
+      if(byRecto.has(normKey(nc.recto))) variants++;        // même recto, verso ≠ → variante
+      else added++;                                          // vraiment nouvelle
+      target.cards.push(nc); byPair.add(k); byRecto.add(normKey(nc.recto));
+    });
+  });
+  base.totalAnswers=base.totalAnswers||0; base.totalSuccess=base.totalSuccess||0;
+  return {added, variants, skipped, newDecks};
 }
 
-document.getElementById("verTag").textContent=APP_VERSION;
-render();
+/* ---------- import CSV ---------- */
+document.getElementById("btnImportCsv").addEventListener("click",()=>document.getElementById("fileCsv").click());
+document.getElementById("fileCsv").addEventListener("change",async e=>{
+  const f=e.target.files[0]; if(!f) return;
+  let txt=await f.text();
+  if(txt.charCodeAt(0)===0xFEFF) txt=txt.slice(1); // BOM UTF-8
+  const d=deck(cur.deckId); let n=0;
+  txt.split(/\r?\n/).forEach(line=>{
+    const i=line.indexOf(";"); if(i<1) return;
+    const r=line.slice(0,i).trim(), v=line.slice(i+1).trim();
+    if(!r||!v) return;
+    d.cards.push({id:uid(), recto:r, verso:v, fav:false, lastC:0, streak:0, due:0}); n++;
+  });
+  save(); toast(`${n} carte${n>1?"s":""} importée${n>1?"s":""}`); openDeck(cur.deckId);
+  e.target.value="";
+});
+
+/* ---------- utils ---------- */
+function esc(s){ return s.replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m])); }
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function todayKey(){ const d=new Date(),p=n=>String(n).padStart(2,"0"); return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate()); }
+function logDay(ok){
+  db.history=db.history||{};
+  const k=todayKey();
+  const e=db.history[k]||{a:0,s:0};
+  e.a++; if(ok) e.s++;
+  db.history[k]=e;
+}
+function renderChart(){
+  const box=document.getElementById("statsChart"); box.innerHTML="";
+  db.history=db.history||{};
+  let any=false;
+  for(let i=13;i>=0;i--){
+    const d=new Date(Date.now()-i*DAY),p=n=>String(n).padStart(2,"0");
+    const k=d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());
+    const e=db.history[k];
+    const bar=document.createElement("div");
+    bar.style.cssText="flex:1 1 0;border-radius:3px 3px 0 0;align-self:flex-end;";
+    if(e&&e.a){ any=true; const pct=Math.round(e.s/e.a*100);
+      bar.style.height=Math.max(4,Math.min(70,pct*0.7))+"px";
+      bar.style.background="var(--accent)";
+      bar.title=k+" : "+pct+"% ("+e.s+"/"+e.a+")";
+    } else { bar.style.height="4px"; bar.style.background="var(--rule)"; }
+    box.appendChild(bar);
+  }
+  if(!any){ box.innerHTML='<div class="nodata">Tes révisions apparaîtront ici jour par jour.</div>'; }
+}
+/* --- recherche globale multi-paquets --- */
+document.getElementById("globalSearch").addEventListener("input",()=>{
+  const q=normKey(document.getElementById("globalSearch").value);
+  const el=document.getElementById("globalResults"); el.innerHTML="";
+  document.getElementById("statsBlock").style.display = q ? "none" : "";
+  if(!q) return;
+  let hits=0;
+  outer:
+  for(const d of db.decks){
+    for(const c of d.cards){
+      if(normKey(c.recto).includes(q)||normKey(c.verso).includes(q)){
+        const line=document.createElement("div"); line.className="cardline";
+        line.innerHTML=`<div class="txt"><b>${c.fav?"★ ":""}${hl(c.recto,document.getElementById("globalSearch").value)}</b><span>${hl(c.verso,document.getElementById("globalSearch").value)}</span></div>
+          <button class="icobtn ed">✎</button>
+          <div class="full"><div>${esc(c.recto)}</div><div class="fa2">${esc(c.verso)}</div></div>`;
+        line.addEventListener("click",e=>{ if(e.target.closest(".icobtn")) return; line.classList.toggle("open"); });
+        line.querySelector(".ed").addEventListener("click",e=>{ e.stopPropagation(); cur.deckId=d.id; editCard(c.id); });
+        el.appendChild(line);
+        if(++hits>=30) break outer;
+      }
+    }
+  }
+  if(!hits) el.innerHTML='<div class="empty">Aucune carte trouvée.</div>';
+});
+document.getElementById("goalLine").addEventListener("click",()=>{
+  const g=prompt("Objectif de cartes par jour :", db.goal);
+  const n=parseInt(g,10);
+  if(n>0){ db.goal=n; save(); renderDecks(); }
+});
+/* ---------- export CSV ---------- */
+document.getElementById("btnExportCsv").addEventListener("click",()=>{
+  const flat=s=>(s||"").split(/\r?\n/).map(x=>x.trim()).filter(Boolean).join(" • ").replace(/;/g,",");
+  let csv="\uFEFFpaquet;recto;verso;etiquettes;note;favori\n";
+  db.decks.forEach(d=>d.cards.forEach(c=>{
+    csv+=[d.name,flat(c.recto),flat(c.verso),c.tags||"",c.lastC||0,c.fav?"★":""].join(";")+"\n";
+  }));
+  const a=document.createElement("a");
+  a.download="fiches_export.csv";
+  a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
+  a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  toast("CSV généré");
+});
+/* ---------- lecture auto ---------- */
+document.getElementById("autoSpeak").checked=!!db.autoSpeak;
+document.getElementById("autoSpeak").addEventListener("change",e=>{ db.autoSpeak=e.target.checked; save(); });
+/* ---------- statistiques + heatmap + corbeille ---------- */
+function renderStats(){
+  const cards=allCards();
+  const now=Date.now();
+  const load=days=>cards.filter(c=>c.due>now&&c.due<=now+days*DAY).length;
+  const dueNow=cards.filter(isDue).length;
+  document.getElementById("statsPanel").innerHTML=
+    `Réponses données : <b>${db.totalAnswers}</b> · réussite globale : <b>${db.totalAnswers?Math.round(db.totalSuccess/db.totalAnswers*100):0}%</b><br>`+
+    `Charge : <b>${dueNow}</b> à revoir · +${load(7)} sous 7 j · +${load(14)} sous 14 j · +${load(30)} sous 30 j<br>`+
+    `Répartition des dernières notes :`;
+  const dist=document.getElementById("distChart"); dist.innerHTML="";
+  const colors={1:"#c04b4b",2:"#d1783a",3:"#d9a21f",4:"#7ba84a",5:"#3a9d6e"};
+  const max=Math.max(1,...[1,2,3,4,5].map(n=>cards.filter(c=>c.lastC===n).length));
+  for(let n=1;n<=5;n++){
+    const v=cards.filter(c=>c.lastC===n).length;
+    const bar=document.createElement("div");
+    bar.style.background=colors[n]; bar.style.height=Math.max(3,v/max*60)+"px";
+    bar.innerHTML='<span>'+n+' · '+v+'</span>';
+    dist.appendChild(bar);
+  }
+  const top=cards.filter(c=>(c.fails||0)>0).sort((a,b)=>(b.fails||0)-(a.fails||0)).slice(0,10);
+  if(top.length){
+    document.getElementById("statsPanel").innerHTML+=
+      "<br><br><b>Top des cartes ratées :</b><br>"+
+      top.map(c=>"⚠×"+c.fails+" — "+esc(coreText(c.recto).split("\n")[0].slice(0,45))).join("<br>");
+  }
+}
+function renderHeatmap(){
+  const box=document.getElementById("heatmap"); box.innerHTML="";
+  db.history=db.history||{};
+  const days=182, start=Date.now()-(days-1)*DAY;
+  for(let i=0;i<days;i++){
+    const d=new Date(start+i*DAY),p=n=>String(n).padStart(2,"0");
+    const k=d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());
+    const a=(db.history[k]||{a:0}).a;
+    const cell=document.createElement("i");
+    if(a>=15) cell.className="l3"; else if(a>=5) cell.className="l2"; else if(a>=1) cell.className="l1";
+    cell.title=k+" : "+a+" réponse(s)";
+    box.appendChild(cell);
+  }
+}
+function renderTrash(){
+  db.trash=db.trash||[];
+  document.getElementById("trashCount").textContent=db.trash.length?("("+db.trash.length+")"):"(vide)";
+  const el=document.getElementById("trashList"); el.innerHTML="";
+  db.trash.slice().reverse().forEach(t=>{
+    const days=Math.floor((Date.now()-t.at)/DAY);
+    const line=document.createElement("div"); line.className="trashline";
+    line.innerHTML=`<div class="t"><b>${esc(coreText(t.card.recto).split("\n")[0].slice(0,40))}</b> · ${esc(t.deckName)} · il y a ${days} j</div>
+      <button class="btn small sec rest">Restaurer</button>`;
+    line.querySelector(".rest").addEventListener("click",()=>{
+      const target=db.decks.find(d=>d.name===t.deckName)||db.decks[0];
+      if(!target){ toast("Crée d'abord un paquet"); return; }
+      target.cards.push(t.card);
+      db.trash=db.trash.filter(x=>x!==t);
+      save(); renderTrash(); toast("Carte restaurée dans "+target.name);
+    });
+    el.appendChild(line);
+  });
+  document.getElementById("btnEmptyTrash").style.display=db.trash.length?"":"none";
+}
+document.getElementById("btnEmptyTrash").addEventListener("click",()=>{
+  if(!confirm("Vider définitivement la corbeille ("+db.trash.length+" cartes) ?")) return;
+  db.trash=[]; save(); renderTrash();
+});
+/* ---------- jeu Match ---------- */
+let match={t0:null,timer:null,first:null,left:0};
+document.getElementById("btnMatch").addEventListener("click",()=>{ startMatch(); nav("match"); });
+document.getElementById("btnMatchAgain").addEventListener("click",startMatch);
+document.getElementById("matchBack").addEventListener("click",()=>{ stopMatchTimer(); nav("deck"); openDeck(cur.deckId); });
+document.getElementById("matchBack2").addEventListener("click",()=>{ stopMatchTimer(); openDeck(cur.deckId); });
+function stopMatchTimer(){ if(match.timer){ clearInterval(match.timer); match.timer=null; } }
+function startMatch(){
+  stopMatchTimer();
+  const d=deck(cur.deckId);
+  const pick=shuffle(d.cards.slice()).slice(0,6);
+  if(pick.length<3){ toast("Il faut au moins 3 cartes"); nav("deck"); return; }
+  match.first=null; match.left=pick.length; match.t0=null;
+  document.getElementById("matchDone").style.display="none";
+  document.getElementById("matchGrid").style.display="";
+  document.getElementById("matchTimer").textContent="0.0 s";
+  const tiles=[];
+  pick.forEach((c,i)=>{
+    tiles.push({pair:i, txt:coreText(c.recto).split("\n")[0].slice(0,40)});
+    tiles.push({pair:i, txt:coreText(c.verso).split("\n")[0].slice(0,40)});
+  });
+  const grid=document.getElementById("matchGrid"); grid.innerHTML="";
+  shuffle(tiles).forEach(t=>{
+    const b=document.createElement("button");
+    b.textContent=t.txt; b.dataset.pair=t.pair;
+    b.addEventListener("click",()=>tapTile(b));
+    grid.appendChild(b);
+  });
+}
+function tapTile(b){
+  if(b.classList.contains("done")) return;
+  if(!match.t0){ match.t0=Date.now();
+    match.timer=setInterval(()=>{ document.getElementById("matchTimer").textContent=((Date.now()-match.t0)/1000).toFixed(1)+" s"; },100); }
+  if(!match.first){ match.first=b; b.classList.add("sel"); return; }
+  if(b===match.first){ b.classList.remove("sel"); match.first=null; return; }
+  const a=match.first; match.first=null; a.classList.remove("sel");
+  if(a.dataset.pair===b.dataset.pair){
+    a.classList.add("done"); b.classList.add("done");
+    if(--match.left===0){
+      stopMatchTimer();
+      const secs=((Date.now()-match.t0)/1000).toFixed(1);
+      document.getElementById("matchGrid").style.display="none";
+      document.getElementById("matchDone").style.display="";
+      document.getElementById("matchScore").textContent="⏱ "+secs+" s";
+    }
+  }else{
+    a.classList.add("bad"); b.classList.add("bad");
+    setTimeout(()=>{ a.classList.remove("bad"); b.classList.remove("bad"); },400);
+  }
+}
+renderDecks();
+renderChart();
 </script>
 </body>
 </html>
