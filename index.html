@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#edf0f3">
 <meta name="apple-mobile-web-app-title" content="Fiches">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>Fiches Anglais V-A.1.7.7</title>
+<title>Fiches Anglais V-A.1.7.8</title>
 <style>
 :root{
   --paper:#edf0f3; --card:#fbfaf7; --ink:#22303c; --ink-soft:#5b6b7a;
@@ -276,7 +276,7 @@ mark{background:#ffe9a8; color:inherit; border-radius:3px; padding:0 1px}
 <body>
 <header>
   <h1 id="hTitle">Mes fiches</h1>
-  <span class="ver">V-A.1.7.7</span>
+  <span class="ver">V-A.1.7.8</span>
 </header>
 
 <!-- ================= ACCUEIL / PAQUETS ================= -->
@@ -495,7 +495,7 @@ mark{background:#ffe9a8; color:inherit; border-radius:3px; padding:0 1px}
 
 <script>
 "use strict";
-const APP_VERSION="V-A.1.7.7";
+const APP_VERSION="V-A.1.7.8";
 const LS_KEY="fichesAnglais_v1";
 const DAY=86400000;
 // intervalles (jours) par niveau de confiance ; multipliés par le nb de succès consécutifs
@@ -670,6 +670,18 @@ Aujourd'hui : ${due} à revoir · demain : +${tmw} · sous 7 jours : +${week}`;
   renderCardList();
   nav("deck");
 }
+function searchScore(c,q){
+  const rc=normKey(coreText(c.recto)), vc=normKey(coreText(c.verso));
+  const rf=normKey(c.recto), vf=normKey(c.verso), tg=normKey(c.tags||"");
+  const word=new RegExp("(^|[^a-z0-9])"+q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"([^a-z0-9]|$)");
+  if(rc===q||vc===q) return 100;                 // la carte EST le mot cherché
+  if(rc.startsWith(q)||vc.startsWith(q)) return 80; // commence par
+  if(word.test(rc)||word.test(vc)) return 60;    // mot entier dans le coeur
+  if(word.test(rf)||word.test(vf)) return 40;    // mot entier ailleurs (annotations)
+  if(rc.includes(q)||vc.includes(q)) return 25;  // sous-chaîne dans le coeur
+  if(rf.includes(q)||vf.includes(q)||tg.includes(q)) return 10; // sous-chaîne ailleurs
+  return 0;
+}
 function hl(text,raw){
   let s=esc(text);
   const r=(raw||"").trim();
@@ -680,9 +692,15 @@ function renderCardList(){
   const d=deck(cur.deckId);
   const raw=document.getElementById("cardSearch").value;
   const q=normKey(raw);
-  let list=q ? d.cards.filter(c=>normKey(c.recto).includes(q)||normKey(c.verso).includes(q)||normKey(c.tags||"").includes(q)) : d.cards.slice();
+  let list;
+  if(q){
+    list=d.cards.map(c=>[searchScore(c,q),c]).filter(x=>x[0]>0)
+        .sort((a,b)=>b[0]-a[0]).map(x=>x[1]);
+  } else list=d.cards.slice();
   const sort=document.getElementById("cardSort").value;
+  const skipSort = q && sort==="def"; // en recherche, l'ordre par défaut = pertinence
   const az=(a,b)=>normKey(coreText(a.recto)).localeCompare(normKey(coreText(b.recto)));
+  if(skipSort){ /* pertinence déjà appliquée */ } else
   if(sort==="alpha") list.sort(az);
   else if(sort==="note") list.sort((a,b)=>(a.lastC||0)-(b.lastC||0)||az(a,b));
   else if(sort==="notedesc") list.sort((a,b)=>(b.lastC||0)-(a.lastC||0)||az(a,b));
@@ -1218,11 +1236,15 @@ document.getElementById("globalSearch").addEventListener("input",()=>{
   const el=document.getElementById("globalResults"); el.innerHTML="";
   document.getElementById("statsBlock").style.display = q ? "none" : "";
   if(!q) return;
+  const found=[];
+  for(const d of db.decks) for(const c of d.cards){
+    const s=searchScore(c,q); if(s>0) found.push([s,c,d]);
+  }
+  found.sort((a,b)=>b[0]-a[0]);
   let hits=0;
-  outer:
-  for(const d of db.decks){
-    for(const c of d.cards){
-      if(normKey(c.recto).includes(q)||normKey(c.verso).includes(q)){
+  for(const [s,c,d] of found.slice(0,30)){
+    {
+      {
         const line=document.createElement("div"); line.className="cardline";
         line.innerHTML=`<div class="txt"><b>${c.fav?"★ ":""}${hl(c.recto,document.getElementById("globalSearch").value)}</b><span>${hl(c.verso,document.getElementById("globalSearch").value)}</span></div>
           <button class="icobtn favg">${c.fav?"★":"☆"}</button><button class="icobtn ed">✎</button>
@@ -1232,11 +1254,13 @@ document.getElementById("globalSearch").addEventListener("input",()=>{
         fg.addEventListener("click",e=>{ e.stopPropagation(); c.fav=!c.fav; save(); fg.textContent=c.fav?"★":"☆"; fg.style.color=c.fav?"var(--amber)":""; });
         line.querySelector(".ed").addEventListener("click",e=>{ e.stopPropagation(); cur.deckId=d.id; editCard(c.id); });
         el.appendChild(line);
-        if(++hits>=30) break outer;
+        ++hits;
       }
     }
   }
   if(!hits) el.innerHTML='<div class="empty">Aucune carte trouvée.</div>';
+  else if(found.length>30) el.insertAdjacentHTML("beforeend",
+    '<div class="empty" style="padding:12px">'+(found.length-30)+' autres résultats — précise ta recherche.</div>');
 });
 document.getElementById("goalLine").addEventListener("click",()=>{
   const g=prompt("Objectif de cartes par jour :", db.goal);
@@ -1380,4 +1404,3 @@ renderChart();
 </script>
 </body>
 </html>
- 
