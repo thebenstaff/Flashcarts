@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#edf0f3">
 <meta name="apple-mobile-web-app-title" content="Fiches">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>Fiches Anglais V-A.1.7.3</title>
+<title>Fiches Anglais V-A.1.7.7</title>
 <style>
 :root{
   --paper:#edf0f3; --card:#fbfaf7; --ink:#22303c; --ink-soft:#5b6b7a;
@@ -276,7 +276,7 @@ mark{background:#ffe9a8; color:inherit; border-radius:3px; padding:0 1px}
 <body>
 <header>
   <h1 id="hTitle">Mes fiches</h1>
-  <span class="ver">V-A.1.7.3</span>
+  <span class="ver">V-A.1.7.7</span>
 </header>
 
 <!-- ================= ACCUEIL / PAQUETS ================= -->
@@ -319,11 +319,14 @@ mark{background:#ffe9a8; color:inherit; border-radius:3px; padding:0 1px}
   <input type="text" id="cardSearch" placeholder="🔍 Rechercher une carte…" style="margin-top:12px" autocomplete="off">
   <div style="margin-top:8px;text-align:right">Trier :
     <select class="mini" id="cardSort">
-      <option value="def">par défaut</option>
-      <option value="note">note croissante</option>
-      <option value="due">échéance proche</option>
-      <option value="leech">sangsues d'abord</option>
-      <option value="new">nouvelles d'abord</option>
+      <option value="def">ordre d'origine</option>
+      <option value="alpha">A → Z (recto)</option>
+      <option value="note">note faible d'abord</option>
+      <option value="notedesc">note forte d'abord</option>
+      <option value="new">non révisées d'abord</option>
+      <option value="fav">favoris d'abord</option>
+      <option value="leech">sangsues ⚠ d'abord</option>
+      <option value="due">à revoir en premier</option>
     </select></div>
   <div class="cardlist" id="cardList"></div>
   <button class="btn ghost wide" id="btnMoreCards" style="display:none;margin-top:6px">Afficher plus de cartes</button>
@@ -341,6 +344,7 @@ mark{background:#ffe9a8; color:inherit; border-radius:3px; padding:0 1px}
     <div><label>Paquet</label><select id="fDeck"></select></div>
     <div><label>Étiquettes</label><input type="text" id="fTags" placeholder="#idiomes #travail" autocomplete="off"></div>
   </div>
+  <button class="btn ghost wide" id="btnFavEdit" style="margin-top:14px">☆ Ajouter aux favoris</button>
   <div style="margin-top:18px" class="row2">
     <button class="btn" id="btnSaveCard">Enregistrer</button>
     <button class="btn ghost" id="btnSaveAnother">Enregistrer + nouvelle</button>
@@ -491,7 +495,7 @@ mark{background:#ffe9a8; color:inherit; border-radius:3px; padding:0 1px}
 
 <script>
 "use strict";
-const APP_VERSION="V-A.1.7.3";
+const APP_VERSION="V-A.1.7.7";
 const LS_KEY="fichesAnglais_v1";
 const DAY=86400000;
 // intervalles (jours) par niveau de confiance ; multipliés par le nb de succès consécutifs
@@ -610,7 +614,7 @@ function renderFavs(){
       if(e.target.closest(".factions")) return;
       line.classList.toggle("open");
     });
-    line.querySelector(".ed").addEventListener("click",()=>{ cur.deckId=d.id; editCard(c.id); });
+    line.querySelector(".ed").addEventListener("click",()=>{ cur.deckId=d.id; editCard(c.id,"favs"); });
     line.querySelector(".unfav").addEventListener("click",()=>{ c.fav=false; save(); renderFavs(); toast("Retiré des favoris"); });
     el.appendChild(line);
   }));
@@ -678,10 +682,14 @@ function renderCardList(){
   const q=normKey(raw);
   let list=q ? d.cards.filter(c=>normKey(c.recto).includes(q)||normKey(c.verso).includes(q)||normKey(c.tags||"").includes(q)) : d.cards.slice();
   const sort=document.getElementById("cardSort").value;
-  if(sort==="note") list.sort((a,b)=>(a.lastC||0)-(b.lastC||0));
-  else if(sort==="due") list.sort((a,b)=>(a.due||0)-(b.due||0));
-  else if(sort==="leech") list.sort((a,b)=>(b.fails||0)-(a.fails||0));
-  else if(sort==="new") list.sort((a,b)=>(a.lastC||0)-(b.lastC||0)||((a.due||0)-(b.due||0)));
+  const az=(a,b)=>normKey(coreText(a.recto)).localeCompare(normKey(coreText(b.recto)));
+  if(sort==="alpha") list.sort(az);
+  else if(sort==="note") list.sort((a,b)=>(a.lastC||0)-(b.lastC||0)||az(a,b));
+  else if(sort==="notedesc") list.sort((a,b)=>(b.lastC||0)-(a.lastC||0)||az(a,b));
+  else if(sort==="due") list.sort((a,b)=>(a.due||0)-(b.due||0)||az(a,b));
+  else if(sort==="leech") list.sort((a,b)=>(b.fails||0)-(a.fails||0)||az(a,b));
+  else if(sort==="fav") list.sort((a,b)=>(b.fav?1:0)-(a.fav?1:0)||az(a,b));
+  else if(sort==="new") list.sort((a,b)=>(a.lastC?1:0)-(b.lastC?1:0)||az(a,b));
   const el=document.getElementById("cardList"); el.innerHTML="";
   if(!d.cards.length){ el.innerHTML='<div class="empty">Paquet vide. Ajoute une carte ou importe un CSV.</div>'; }
   else if(!list.length){ el.innerHTML='<div class="empty">Aucune carte ne correspond à ta recherche.</div>'; }
@@ -690,8 +698,11 @@ function renderCardList(){
     const line=document.createElement("div"); line.className="cardline";
     line.innerHTML=`<span class="lv" style="background:${colors[c.lastC||0]}">${isMature(c)?"✓":(c.lastC||"–")}</span>
       <div class="txt"><b>${c.fav?"★ ":""}${(c.fails||0)>=5?'<span class="leech">⚠</span> ':""}${hl(c.recto,raw)}</b><span>${hl(c.verso,raw)}${c.tags?' <span class="tagchip">'+esc(c.tags)+'</span>':""}</span></div>
-      <button class="icobtn ed">✎</button><button class="icobtn del">🗑</button>
+      <button class="icobtn fav">${c.fav?"★":"☆"}</button><button class="icobtn ed">✎</button><button class="icobtn del">🗑</button>
       <div class="full"><div>${hl(c.recto,raw)}</div><div class="fa2">${hl(c.verso,raw)}</div></div>`;
+    const favB=line.querySelector(".fav");
+    favB.style.color=c.fav?"var(--amber)":"";
+    favB.addEventListener("click",e=>{ e.stopPropagation(); c.fav=!c.fav; save(); favB.textContent=c.fav?"★":"☆"; favB.style.color=c.fav?"var(--amber)":""; });
     line.addEventListener("click",e=>{
       if(e.target.closest(".icobtn")) return;
       line.classList.toggle("open");
@@ -748,7 +759,8 @@ document.getElementById("btnStudyDeck").addEventListener("click",()=>{
 
 /* ---------- édition ---------- */
 document.getElementById("btnAddCard").addEventListener("click",()=>editCard(null));
-function editCard(id){
+function editCard(id, from){
+  cur.editFrom=from||"deck";
   cur.editId=id;
   const d=deck(cur.deckId);
   const c=id? d.cards.find(x=>x.id===id): null;
@@ -756,13 +768,26 @@ function editCard(id){
   document.getElementById("fRecto").value=c?c.recto:"";
   document.getElementById("fVerso").value=c?c.verso:"";
   document.getElementById("fTags").value=c?(c.tags||""):"";
+  cur.editFav = c ? !!c.fav : false;
+  refreshFavEditBtn();
   const sel=document.getElementById("fDeck"); sel.innerHTML="";
   db.decks.forEach(dk=>{ const o=document.createElement("option"); o.value=dk.id; o.textContent=dk.name;
     if(dk.id===cur.deckId) o.selected=true; sel.appendChild(o); });
   document.getElementById("btnSaveAnother").style.display=c?"none":"";
   nav("edit");
 }
-document.getElementById("editBack").addEventListener("click",()=>openDeck(cur.deckId));
+document.getElementById("editBack").addEventListener("click",()=>{
+  if(cur.editFrom==="favs"){ renderFavs(); nav("favs"); } else openDeck(cur.deckId);
+});
+function refreshFavEditBtn(){
+  const b=document.getElementById("btnFavEdit");
+  b.textContent = cur.editFav ? "★ Retirer des favoris" : "☆ Ajouter aux favoris";
+  b.style.color = cur.editFav ? "var(--amber)" : "";
+  b.style.borderColor = cur.editFav ? "var(--amber)" : "";
+}
+document.getElementById("btnFavEdit").addEventListener("click",()=>{
+  cur.editFav=!cur.editFav; refreshFavEditBtn();
+});
 function saveCard(){
   const r=document.getElementById("fRecto").value.trim();
   const v=document.getElementById("fVerso").value.trim();
@@ -771,17 +796,21 @@ function saveCard(){
   const target=deck(document.getElementById("fDeck").value)||d;
   const tags=document.getElementById("fTags").value.trim();
   if(cur.editId){
-    const c=d.cards.find(x=>x.id===cur.editId); c.recto=r; c.verso=v; c.tags=tags;
+    const c=d.cards.find(x=>x.id===cur.editId); c.recto=r; c.verso=v; c.tags=tags; c.fav=cur.editFav;
     if(target.id!==d.id){ d.cards=d.cards.filter(x=>x.id!==c.id); target.cards.push(c); cur.deckId=target.id; toast("Carte déplacée vers "+target.name); }
   }else{
-    target.cards.push({id:uid(), recto:r, verso:v, tags, fav:false, lastC:0, streak:0, due:0});
+    target.cards.push({id:uid(), recto:r, verso:v, tags, fav:cur.editFav, lastC:0, streak:0, due:0});
     cur.deckId=target.id;
   }
   save(); return true;
 }
-document.getElementById("btnSaveCard").addEventListener("click",()=>{ if(saveCard()) openDeck(cur.deckId); });
+document.getElementById("btnSaveCard").addEventListener("click",()=>{
+  if(!saveCard()) return;
+  if(cur.editFrom==="favs"){ renderFavs(); nav("favs"); } else openDeck(cur.deckId);
+});
 document.getElementById("btnSaveAnother").addEventListener("click",()=>{
-  if(saveCard()){ cur.editId=null; document.getElementById("fRecto").value=""; document.getElementById("fVerso").value=""; document.getElementById("fRecto").focus(); toast("Carte ajoutée"); }
+  if(saveCard()){ cur.editId=null; cur.editFav=false; refreshFavEditBtn();
+    document.getElementById("fRecto").value=""; document.getElementById("fVerso").value=""; document.getElementById("fTags").value=""; document.getElementById("fRecto").focus(); toast("Carte ajoutée"); }
 });
 
 /* ---------- révision ---------- */
@@ -976,6 +1005,8 @@ function buildQcm(c){
       v.className="verdict "+(ok?"good":"bad");
       if(cur.mode==="exam"){
         cur.seen++; if(ok) cur.ok++;
+        db.totalAnswers++; if(ok) db.totalSuccess++;
+        logDay(ok); save();
         setTimeout(nextCard, ok?600:1400);
         return;
       }
@@ -1025,6 +1056,7 @@ document.getElementById("undoBtn").addEventListener("click",()=>{
 });
 function startExam(cards){
   cur.mode="exam";
+  cur.undo=null; document.getElementById("undoBtn").classList.remove("show");
   cur.pool=[]; cur.again=[];
   cur.queue=shuffle(cards.slice()).slice(0,20);
   cur.idx=0; cur.seen=0; cur.ok=0; cur.examT0=Date.now();
@@ -1046,7 +1078,7 @@ function nextCard(){
       document.getElementById("doneBox").style.display="";
       document.getElementById("doneBig").textContent=cur.ok+" / "+cur.queue.length;
       document.getElementById("doneBig").style.color = cur.ok>=cur.queue.length*0.8?"var(--green)":cur.ok>=cur.queue.length*0.5?"var(--amber)":"var(--red)";
-      document.getElementById("doneNote").textContent=`Examen terminé en ${secs} s. Sans impact sur ta planification.`;
+      document.getElementById("doneNote").textContent=`Examen terminé en ${secs} s. Compté dans ton objectif du jour ; ta planification de révision reste inchangée.`;
       document.getElementById("btnMore").style.display="none";
       return;
     }
@@ -1120,7 +1152,7 @@ function mergeInto(base, inc){
     const byPair=new Set(target.cards.map(cardKey));
     const byRecto=new Set(target.cards.map(c=>normKey(c.recto)));
     (idk.cards||[]).forEach(c=>{
-      const nc={id:uid(), recto:c.recto, verso:c.verso, fav:!!c.fav, lastC:c.lastC||0, streak:c.streak||0, due:c.due||0};
+      const nc={id:uid(), recto:c.recto, verso:c.verso, tags:c.tags||"", fav:!!c.fav, lastC:c.lastC||0, streak:c.streak||0, due:c.due||0, fails:c.fails||0};
       const k=cardKey(nc);
       if(byPair.has(k)){ skipped++; return; }              // identique → on garde la version locale
       if(byRecto.has(normKey(nc.recto))) variants++;        // même recto, verso ≠ → variante
@@ -1193,9 +1225,11 @@ document.getElementById("globalSearch").addEventListener("input",()=>{
       if(normKey(c.recto).includes(q)||normKey(c.verso).includes(q)){
         const line=document.createElement("div"); line.className="cardline";
         line.innerHTML=`<div class="txt"><b>${c.fav?"★ ":""}${hl(c.recto,document.getElementById("globalSearch").value)}</b><span>${hl(c.verso,document.getElementById("globalSearch").value)}</span></div>
-          <button class="icobtn ed">✎</button>
+          <button class="icobtn favg">${c.fav?"★":"☆"}</button><button class="icobtn ed">✎</button>
           <div class="full"><div>${esc(c.recto)}</div><div class="fa2">${esc(c.verso)}</div></div>`;
         line.addEventListener("click",e=>{ if(e.target.closest(".icobtn")) return; line.classList.toggle("open"); });
+        const fg=line.querySelector(".favg"); fg.style.color=c.fav?"var(--amber)":"";
+        fg.addEventListener("click",e=>{ e.stopPropagation(); c.fav=!c.fav; save(); fg.textContent=c.fav?"★":"☆"; fg.style.color=c.fav?"var(--amber)":""; });
         line.querySelector(".ed").addEventListener("click",e=>{ e.stopPropagation(); cur.deckId=d.id; editCard(c.id); });
         el.appendChild(line);
         if(++hits>=30) break outer;
@@ -1328,6 +1362,7 @@ function tapTile(b){
   const a=match.first; match.first=null; a.classList.remove("sel");
   if(a.dataset.pair===b.dataset.pair){
     a.classList.add("done"); b.classList.add("done");
+    db.totalAnswers++; db.totalSuccess++; logDay(true); save();
     if(--match.left===0){
       stopMatchTimer();
       const secs=((Date.now()-match.t0)/1000).toFixed(1);
